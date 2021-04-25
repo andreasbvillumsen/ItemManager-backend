@@ -1,0 +1,31 @@
+version: "3"
+services:
+  postgres:
+    container_name: itemManagerPostgres
+    image: postgres:latest
+    ports:
+      - "5434:5432"
+    volumes:
+      - /data/postgres:/data/postgres/itemManager
+    env_file:
+      - docker.env
+    networks:
+      - postgres
+
+  pgadmin:
+    links:
+      - postgres:postgres
+    container_name: itemManagerPgadmin
+    image: dpage/pgadmin4
+    ports:
+      - "5433:80"
+    volumes:
+      - /data/pgadmin:/root/.pgadmin/itemManager
+    env_file:
+      - docker.env
+    networks:
+      - postgres
+
+networks:
+  postgres:
+    driver: bridge
