@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { CollectionModule } from './collection/api/collection.module';
 import * as Joi from '@hapi/joi';
 import { ConfigModule } from '@nestjs/config';
-import { DatabaseModule } from './collection/infrastructure/data-source/postgres/database.module';
+import { DatabaseModule } from './infrastructure/data-source/postgres/database.module';
+import { CollectionsModule } from './api/modules/collections.module';
+import { ItemsModule } from './api/modules/items.module';
 @Module({
   imports: [
-    CollectionModule,
     ConfigModule.forRoot({
       validationSchema: Joi.object({
         POSTGRES_HOST: Joi.string().required(),
@@ -17,6 +17,8 @@ import { DatabaseModule } from './collection/infrastructure/data-source/postgres
       }),
     }),
     DatabaseModule,
+    CollectionsModule,
+    ItemsModule,
   ],
   controllers: [],
   providers: [],
