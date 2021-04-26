@@ -2,11 +2,14 @@ import { WebSocketGateway, SubscribeMessage, MessageBody } from '@nestjs/websock
 import { CollectionsService } from '../../core/services/collections.service';
 import { CreateCollectionDto } from '../dtos/collections/create-collection.dto';
 import { UpdateCollectionDto } from '../dtos/collections/update-collection.dto';
+import { Roles } from '../decorators/roles.decorator';
+import { Role } from '../enums/role.enum';
 
 @WebSocketGateway()
 export class CollectionsGateway {
   constructor(private readonly collectionsService: CollectionsService) {}
 
+  @Roles(Role.Admin)
   @SubscribeMessage('createCollection')
   create(@MessageBody() createCollectionDto: CreateCollectionDto) {
     return this.collectionsService.create(createCollectionDto);
