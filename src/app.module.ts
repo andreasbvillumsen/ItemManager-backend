@@ -6,6 +6,7 @@ import { CollectionsModule } from './api/modules/collections.module';
 import { ItemsModule } from './api/modules/items.module';
 import { AuthModule } from './api/modules/auth.module';
 import { UsersModule } from './api/modules/users.module';
+import { AppController } from './api/controllers/app.controller';
 @Module({
   imports: [
     ConfigModule.forRoot({

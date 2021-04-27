@@ -23,7 +23,7 @@ export class UsersGateway {
 
   @SubscribeMessage('findOneUser')
   findOne(@MessageBody() id: number) {
-    return this.usersService.findOne(id);
+    return this.usersService.findOneByID(id);
   }
 
   @SubscribeMessage('updateUser')
