@@ -1,5 +1,13 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Item } from './item.entity';
+import { User } from './user.entity';
 
 @Entity()
 export class Collection {
@@ -9,6 +17,10 @@ export class Collection {
   @Column()
   name: string;
 
-  @OneToMany((type) => Item, (item) => item.collection)
+  @OneToMany(() => Item, (item) => item.collection)
   items: Item[];
+
+  @ManyToMany(() => User, (user) => user.collections)
+  @JoinTable()
+  users: User[];
 }

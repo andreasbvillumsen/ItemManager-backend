@@ -4,6 +4,9 @@ import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './infrastructure/data-source/postgres/database.module';
 import { CollectionsModule } from './api/modules/collections.module';
 import { ItemsModule } from './api/modules/items.module';
+import { AuthModule } from './api/modules/auth.module';
+import { UsersModule } from './api/modules/users.module';
+import { AppController } from './api/controllers/app.controller';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -19,6 +22,8 @@ import { ItemsModule } from './api/modules/items.module';
     DatabaseModule,
     CollectionsModule,
     ItemsModule,
+    AuthModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [],
