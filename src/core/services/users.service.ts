@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from '../../api/dtos/users/create-user.dto';
 import { UpdateUserDto } from '../../api/dtos/users/update-user.dto';
-
-// This should be a real class/interface representing a user entity
-export type User = any;
+import { IUsersService } from '../primary-ports/user.service.interface';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from '../../infrastructure/data-source/entities/user.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
-export class UsersService {
+export class UsersService   {
+  constructor(
+    @InjectRepository(User) private userRepository: Repository<User>,
+  ) {}
   private readonly users = [
     {
       userId: 1,
@@ -20,7 +24,7 @@ export class UsersService {
     },
   ];
 
-  create(createUserDto: CreateUserDto) {
+   create(createUserDto: CreateUserDto) {
     return 'This action adds a new user';
   }
 
