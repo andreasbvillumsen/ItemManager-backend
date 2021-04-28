@@ -32,10 +32,6 @@ export class UsersService {
     return this.users.find((user) => user.userId === id);
   }
 
-  async findOne(username: string): Promise<User | undefined> {
-    return this.users.find((user) => user.username === username);
-  }
-
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }
