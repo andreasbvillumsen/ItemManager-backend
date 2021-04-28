@@ -15,7 +15,7 @@ export class UsersService implements IUsersService {
     private userRepository: Repository<UserEntity>,
   ) {}
 
-  async createUser(createUserDto: CreateUserDto): Promise<UserModel> {
+  async create(createUserDto: CreateUserDto): Promise<UserModel> {
     if (await this.userRepository.findOne({ email: createUserDto.email }))
       throw new Error('This user already exists');
 
@@ -47,7 +47,7 @@ export class UsersService implements IUsersService {
     };
   }
 
-  async findAllUsers(): Promise<UserModel[]> {
+  async findAll(): Promise<UserModel[]> {
     const userEntities = await this.userRepository.find();
     if (userEntities) {
       const users: UserModel[] = JSON.parse(JSON.stringify(userEntities));
@@ -57,7 +57,7 @@ export class UsersService implements IUsersService {
     }
   }
 
-  async findOneUserByID(id: number): Promise<UserModel> {
+  async findOneByID(id: number): Promise<UserModel> {
     const userEntity = await this.userRepository.findOne({ id: id });
     if (userEntity) {
       return {
@@ -73,7 +73,7 @@ export class UsersService implements IUsersService {
     }
   }
 
-  async findOneUserByEmail(email: string): Promise<UserModel> {
+  async findOneByEmail(email: string): Promise<UserModel> {
     const userEntity = await this.userRepository.findOne({ email: email });
     if (userEntity) {
       return {
@@ -89,11 +89,11 @@ export class UsersService implements IUsersService {
     }
   }
 
-  updateUser(id: number, updateUserDto: UpdateUserDto): any {
+  update(id: number, updateUserDto: UpdateUserDto): any {
     return null;
   }
 
-  removeUser(id: number): any {
+  remove(id: number): any {
     return `This action removes a #${id} user`;
   }
 }
