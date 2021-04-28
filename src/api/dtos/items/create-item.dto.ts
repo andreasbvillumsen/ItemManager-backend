@@ -1,6 +1,6 @@
-import { Collection } from '../../../core/models/collection.model';
+import { CollectionModel } from '../../../core/models/collection.model';
 
 export class CreateItemDto {
   name: string;
-  collection: Collection;
+  collection: CollectionModel;
 }

@@ -1,8 +1,8 @@
 import { Column, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Collection } from './collection.model';
+import { CollectionModel } from './collection.model';
 
-export interface Item {
+export interface ItemModel {
   id: number;
   name: string;
-  collection: Collection;
+  collection: CollectionModel;
 }

@@ -1,18 +1,18 @@
 import { CreateUserDto } from '../../api/dtos/users/create-user.dto';
-import { User } from '../models/user.model';
+import { UserModel } from '../models/user.model';
 import { UpdateUserDto } from '../../api/dtos/users/update-user.dto';
 
 export const IUsersServiceProvider = 'IUsersServiceProvider';
 export interface IUsersService {
-  create(createUserDto: CreateUserDto): Promise<User>;
+  createUser(createUserDto: CreateUserDto): Promise<UserModel>;
 
-  findAll(): Promise<User[]>;
+  findAllUsers(): Promise<UserModel[]>;
 
-  findOneByID(id: number): Promise<User | undefined>;
+  findOneUserByID(id: number): Promise<UserModel>;
 
-  findOne(username: string): Promise<User | undefined>;
+  findOneUserByEmail(email: string): Promise<UserModel>;
 
-  update(id: number, updateUserDto: UpdateUserDto): Promise<User>;
+  updateUser(id: number, updateUserDto: UpdateUserDto): any;
 
-  remove(id: number): Promise<User>;
+  removeUser(id: number): any;
 }

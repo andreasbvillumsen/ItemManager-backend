@@ -1,9 +1,9 @@
-import { Item } from './item.model';
-import { User } from './user.model';
+import { ItemModel } from './item.model';
+import { UserModel } from './user.model';
 
-export interface Collection {
+export interface CollectionModel {
   id: number;
   name: string;
-  items: Item[];
-  users: User[];
+  items: ItemModel[];
+  users: UserModel[];
 }

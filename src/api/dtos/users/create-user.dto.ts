@@ -1,8 +1,8 @@
-import { Collection } from '../../../core/models/collection.model';
+import { CollectionModel } from '../../../core/models/collection.model';
 
 export class CreateUserDto {
+  email: string;
   firstname: string;
   lastname: string;
   password: string;
-  collections: Collection[];
 }
