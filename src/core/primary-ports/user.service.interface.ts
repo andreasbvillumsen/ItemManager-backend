@@ -12,7 +12,7 @@ export interface IUsersService {
 
   findOneByEmail(email: string): Promise<UserModel>;
 
-  update(id: number, updateUserDto: UpdateUserDto): any;
+  update(id: number, updateUserDto: UpdateUserDto): Promise<any>;
 
-  remove(id: number): any;
+  remove(id: number): Promise<any>;
 }

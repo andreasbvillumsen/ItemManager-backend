@@ -5,6 +5,9 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UserEntity } from '../../infrastructure/data-source/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CreateUserDto } from '../../api/dtos/users/create-user.dto';
+import { LoginUserDto } from '../../api/dtos/users/login-user.dto';
+import { UserModel } from '../models/user.model';
 
 @Injectable()
 export class AuthService {
@@ -15,12 +18,15 @@ export class AuthService {
     private userRepository: Repository<UserEntity>,
   ) {}
 
-  async login(user: any) {
-    const userFromDB = await this.userRepository.findOne({ email: user.email });
+  async login(loginUserDto: LoginUserDto): Promise<any> {
+    // return loginUserDto;
+    const userFromDB: UserModel = await this.usersService.findOneByEmail(
+      loginUserDto.email,
+    );
 
     if (userFromDB) {
-      if (await bcrypt.compare(user.password, userFromDB.password)) {
-        const payload = { email: user.email, sub: user.userId };
+      if (await bcrypt.compare(loginUserDto.password, userFromDB.password)) {
+        const payload = { email: userFromDB.email, sub: userFromDB.id };
         userFromDB.password = undefined;
         return {
           user: userFromDB,
@@ -38,41 +44,33 @@ export class AuthService {
     }
   }
 
-  async register(body: any): Promise<any> {
-    if (await this.userRepository.findOne({ email: body.email }))
+  async register(createUserDto: CreateUserDto): Promise<any> {
+    // return createUserDto;
+    if (await this.userRepository.findOne({ email: createUserDto.email }))
       return {
         error: 'Email in use. Please use another email.',
       };
 
-    // Hash password
-    const hash = await bcrypt.hash(body.password, 10);
-
-    // Register user in database
-    let user = this.userRepository.create();
-    user.email = body.email;
-    user.password = hash;
-    user.firstname = body.firstname;
-    user.lastname = body.lastname;
-    user = await this.userRepository.save(user);
-
-    // Parse user returned from database
-    const newUser = JSON.parse(JSON.stringify(user));
-
-    // Make sure the password is not returned with the user
-    newUser.password = undefined;
+    // Create user
+    // return createUserDto;
+    const userModel = await this.usersService.create(createUserDto);
 
     // Return user info and authentication bearer token.
     return {
-      user: newUser,
+      user: userModel,
       bearer_token: this.jwtService.sign({
-        email: newUser.email,
-        sub: newUser.userId,
+        email: userModel.email,
+        sub: userModel.id,
       }),
     };
   }
 
+  // Provide validation on correct password, identifying user.
   async validateUser(email: string, password: string): Promise<boolean> {
+    // Get user from db.
     const user = await this.userRepository.findOne({ email: email });
+
+    // Compare plain text password to hashed password.
     return bcrypt.compare(password, user.password);
   }
 }
