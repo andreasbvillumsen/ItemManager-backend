@@ -1,26 +1,47 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCollectionDto } from '../../api/dtos/collections/create-collection.dto';
 import { UpdateCollectionDto } from '../../api/dtos/collections/update-collection.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CollectionEntity } from '../../infrastructure/data-source/entities/collection.entity';
+import { CollectionModel } from '../models/collection.model';
 
 @Injectable()
 export class CollectionsService {
-  create(createCollectionDto: CreateCollectionDto) {
-    return 'This action adds a new collection';
+  constructor(
+    @InjectRepository(CollectionEntity)
+    private collectionRepository: Repository<CollectionEntity>,
+  ) {}
+
+  async create(createCollectionDto: CreateCollectionDto) {
+    const collectionEntity = await this.collectionRepository.create(
+      createCollectionDto,
+    );
+
+    const collectionEntityDb = await this.collectionRepository.save(
+      collectionEntity,
+    );
+
+    const collectionModel: CollectionModel = JSON.parse(
+      JSON.stringify(collectionEntityDb),
+    );
+
+    return collectionModel;
   }
 
-  findAll() {
-    return `This action returns all collections`;
+  async findAll() {
+    return await this.collectionRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} collection`;
+  async findOne(id: number) {
+    return await this.collectionRepository.findOne(id);
   }
 
-  update(id: number, updateCollectionDto: UpdateCollectionDto) {
-    return `This action updates a #${id} collection`;
+  async update(id: number, updateCollectionDto: UpdateCollectionDto) {
+    return await this.collectionRepository.update(id, updateCollectionDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} collection`;
+  async remove(id: number) {
+    return await this.collectionRepository.delete(id);
   }
 }

@@ -59,14 +59,7 @@ export class UsersService implements IUsersService {
   async findOneByEmail(email: string): Promise<UserModel> {
     const userEntity = await this.userRepository.findOne({ email: email });
     if (userEntity) {
-      return {
-        id: userEntity.id,
-        email: userEntity.email,
-        firstname: userEntity.firstname,
-        lastname: userEntity.lastname,
-        password: userEntity.password,
-        collections: userEntity.collections,
-      };
+      return JSON.parse(JSON.stringify(userEntity));
     } else {
       throw new Error("Can't find a user with this email");
     }
