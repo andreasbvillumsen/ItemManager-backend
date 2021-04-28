@@ -1,14 +1,14 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Collection } from './collection.entity';
+import { CollectionEntity } from './collection.entity';
 
 @Entity()
-export class Item {
+export class ItemEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   name: string;
 
-  @ManyToOne(() => Collection, (collection) => collection.items)
-  collection: Collection;
+  @ManyToOne(() => CollectionEntity, (collection) => collection.items)
+  collection: CollectionEntity;
 }

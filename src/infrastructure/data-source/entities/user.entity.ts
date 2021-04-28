@@ -1,8 +1,8 @@
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Collection } from './collection.entity';
+import { CollectionEntity } from './collection.entity';
 
 @Entity()
-export class User {
+export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -15,6 +15,6 @@ export class User {
   @Column()
   password: string;
 
-  @ManyToMany(() => Collection, (collection) => collection.users)
-  collections: Collection[];
+  @ManyToMany(() => CollectionEntity, (collection) => collection.users)
+  collections: CollectionEntity[];
 }

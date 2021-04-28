@@ -6,21 +6,21 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Item } from './item.entity';
-import { User } from './user.entity';
+import { ItemEntity } from './item.entity';
+import { UserEntity } from './user.entity';
 
 @Entity()
-export class Collection {
+export class CollectionEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   name: string;
 
-  @OneToMany(() => Item, (item) => item.collection)
-  items: Item[];
+  @OneToMany(() => ItemEntity, (item) => item.collection)
+  items: ItemEntity[];
 
-  @ManyToMany(() => User, (user) => user.collections)
+  @ManyToMany(() => UserEntity, (user) => user.collections)
   @JoinTable()
-  users: User[];
+  users: UserEntity[];
 }
