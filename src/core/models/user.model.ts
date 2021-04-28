@@ -1,7 +1,6 @@
-import { Collection } from './collection.model';
-
-export interface User {
+export interface UserModel {
   id: number;
+  email: string;
   firstname: string;
   lastname: string;
   password: string;

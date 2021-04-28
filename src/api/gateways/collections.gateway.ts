@@ -1,4 +1,8 @@
-import { WebSocketGateway, SubscribeMessage, MessageBody } from '@nestjs/websockets';
+import {
+  WebSocketGateway,
+  SubscribeMessage,
+  MessageBody,
+} from '@nestjs/websockets';
 import { CollectionsService } from '../../core/services/collections.service';
 import { CreateCollectionDto } from '../dtos/collections/create-collection.dto';
 import { UpdateCollectionDto } from '../dtos/collections/update-collection.dto';
