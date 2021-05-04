@@ -1,34 +1,99 @@
-import { WebSocketGateway, SubscribeMessage, MessageBody } from '@nestjs/websockets';
+import {
+  WebSocketGateway,
+  SubscribeMessage,
+  MessageBody,
+  WebSocketServer,
+  ConnectedSocket,
+} from '@nestjs/websockets';
 import { ItemsService } from '../../core/services/items.service';
 import { CreateItemDto } from '../dtos/items/create-item.dto';
 import { UpdateItemDto } from '../dtos/items/update-item.dto';
+import { Inject } from '@nestjs/common';
+import {
+  IItemsService,
+  IItemsServiceProvider,
+} from '../../core/primary-ports/item.service.interface';
+import { CreateUserDto } from '../dtos/users/create-user.dto';
+import { Socket } from 'socket.io';
+import { UpdateUserDto } from '../dtos/users/update-user.dto';
 
 @WebSocketGateway()
 export class ItemsGateway {
-  constructor(private readonly itemsService: ItemsService) {}
+  constructor(
+    @Inject(IItemsServiceProvider) private itemsService: IItemsService,
+  ) {}
+  @WebSocketServer() server;
 
   @SubscribeMessage('createItem')
-  create(@MessageBody() createItemDto: CreateItemDto) {
-    return this.itemsService.create(createItemDto);
+  async create(
+    @MessageBody() createItemDto: CreateItemDto,
+    @ConnectedSocket() client: Socket,
+  ): Promise<void> {
+    try {
+      const newItem = await this.itemsService.create(createItemDto);
+      if (newItem) {
+        const items = await this.itemsService.findAll();
+        this.server.emit('allItems', items);
+      }
+    } catch (e) {
+      client.error(e.message);
+    }
   }
 
   @SubscribeMessage('findAllItems')
-  findAll() {
-    return this.itemsService.findAll();
+  async findAll(@ConnectedSocket() client: Socket): Promise<void> {
+    try {
+      const items = await this.itemsService.findAll();
+      client.emit('allItems', items);
+    } catch (e) {
+      client.error(e.message);
+    }
   }
 
   @SubscribeMessage('findOneItem')
-  findOne(@MessageBody() id: number) {
-    return this.itemsService.findOne(id);
+  async findOne(
+    @MessageBody() id: number,
+    @ConnectedSocket() client: Socket,
+  ): Promise<void> {
+    try {
+      const item = await this.itemsService.findOneByID(id);
+      client.emit('oneItem', item);
+    } catch (e) {
+      client.error(e.message);
+    }
   }
 
   @SubscribeMessage('updateItem')
-  update(@MessageBody() updateItemDto: UpdateItemDto) {
-    return this.itemsService.update(updateItemDto.id, updateItemDto);
+  async update(
+    @MessageBody() updateItemDto: UpdateItemDto,
+    @ConnectedSocket() client: Socket,
+  ): Promise<void> {
+    try {
+      const updatedItem = await this.itemsService.update(
+        updateItemDto.id,
+        updateItemDto,
+      );
+      if (updatedItem) {
+        client.emit('itemUpdated', updatedItem);
+        const users = await this.itemsService.findAll();
+        this.server.emit('allItems', users);
+      }
+    } catch (e) {
+      client.error(e.message);
+    }
   }
 
   @SubscribeMessage('removeItem')
-  remove(@MessageBody() id: number) {
-    return this.itemsService.remove(id);
+  async remove(
+    @MessageBody() id: number,
+    @ConnectedSocket() client: Socket,
+  ): Promise<void> {
+    try {
+      await this.itemsService.remove(id);
+      const items = await this.itemsService.findAll();
+      this.server.emit('allItems', items);
+    } catch (e) {
+      client.error(e.message);
+    }
   }
 }

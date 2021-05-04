@@ -5,15 +5,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ItemEntity } from '../../infrastructure/data-source/entities/item.entity';
 import { ItemModel } from '../models/item.model';
+import { IItemsService } from '../primary-ports/item.service.interface';
 
 @Injectable()
-export class ItemsService {
+export class ItemsService implements IItemsService {
   constructor(
     @InjectRepository(ItemEntity)
     private itemRepository: Repository<ItemEntity>,
   ) {}
 
-  async create(createItemDto: CreateItemDto) {
+  async create(createItemDto: CreateItemDto): Promise<ItemModel> {
     const itemEntity = await this.itemRepository.create(createItemDto);
 
     const itemEntityDb = await this.itemRepository.save(itemEntity);
@@ -23,19 +24,53 @@ export class ItemsService {
     return itemModel;
   }
 
-  async findAll() {
-    return await this.itemRepository.find();
+  async findAll(): Promise<ItemModel[]> {
+    const itemEntities = await this.itemRepository.find();
+    if (itemEntities) {
+      return JSON.parse(JSON.stringify(itemEntities));
+    } else {
+      throw new Error('Could´t find any items');
+    }
   }
 
-  async findOne(id: number) {
-    return await this.itemRepository.findOne(id);
+  async findOneByID(id: number): Promise<ItemModel> {
+    const itemEntity = await this.itemRepository.findOne({ id: id });
+
+    if (itemEntity) {
+      return JSON.parse(JSON.stringify(itemEntity));
+    } else {
+      throw new Error("Can't find a item with this id");
+    }
   }
 
-  async update(id: number, updateItemDto: UpdateItemDto) {
-    return await this.itemRepository.update(id, updateItemDto);
+  async update(id: number, updateItemDto: UpdateItemDto): Promise<ItemModel> {
+    if (id !== updateItemDto.id) {
+      throw new Error('Id does not match');
+    }
+
+    const itemToUpdate = await this.itemRepository.findOne({ id: id });
+    if (itemToUpdate) {
+      await this.itemRepository.update(id, updateItemDto);
+      const updatedItem = await this.itemRepository.findOne({ id: id });
+
+      if (updatedItem) {
+        return JSON.parse(JSON.stringify(updatedItem));
+      } else {
+        throw new Error('Item was not updated');
+      }
+    } else {
+      throw new Error('This item does not exist');
+    }
   }
 
-  async remove(id: number) {
-    return await this.itemRepository.delete(id)
+  async remove(id: number): Promise<any> {
+    if (await this.itemRepository.findOne({ id: id })) {
+      await this.itemRepository.delete({ id: id });
+      return {
+        message: 'Item was successfully removed!',
+      };
+    } else {
+      throw new Error('Item does not exist!');
+    }
   }
 }

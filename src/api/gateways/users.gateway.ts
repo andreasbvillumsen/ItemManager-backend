@@ -2,37 +2,109 @@ import {
   WebSocketGateway,
   SubscribeMessage,
   MessageBody,
+  WebSocketServer,
+  ConnectedSocket,
 } from '@nestjs/websockets';
 import { CreateUserDto } from '../dtos/users/create-user.dto';
 import { UpdateUserDto } from '../dtos/users/update-user.dto';
 import { UsersService } from '../../core/services/users.service';
+import { Inject } from '@nestjs/common';
+import {
+  IUsersService,
+  IUsersServiceProvider,
+} from '../../core/primary-ports/user.service.interface';
+import { Socket } from 'socket.io';
 
 @WebSocketGateway()
 export class UsersGateway {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    @Inject(IUsersServiceProvider) private usersService: IUsersService,
+  ) {}
+  @WebSocketServer() server;
 
   @SubscribeMessage('createUser')
-  create(@MessageBody() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  async create(
+    @MessageBody() createUserDto: CreateUserDto,
+    @ConnectedSocket() client: Socket,
+  ): Promise<void> {
+    try {
+      const newUser = await this.usersService.create(createUserDto);
+      if (newUser) {
+        const users = await this.usersService.findAll();
+        this.server.emit('allUsers', users);
+      }
+    } catch (e) {
+      client.error(e.message);
+    }
   }
 
   @SubscribeMessage('findAllUsers')
-  findAll() {
-    return this.usersService.findAll();
+  async findAll(@ConnectedSocket() client: Socket): Promise<void> {
+    try {
+      const users = await this.usersService.findAll();
+      client.emit('allUsers', users);
+    } catch (e) {
+      client.error(e.message);
+    }
   }
 
-  @SubscribeMessage('findOneUser')
-  findOne(@MessageBody() id: number) {
-    return this.usersService.findOneByID(id);
+  @SubscribeMessage('findOneUserById')
+  async findOneById(
+    @MessageBody() id: number,
+    @ConnectedSocket() client: Socket,
+  ): Promise<void> {
+    try {
+      const user = await this.usersService.findOneByID(id);
+      client.emit('oneUser', user);
+    } catch (e) {
+      client.error(e.message);
+    }
+  }
+
+  @SubscribeMessage('findOneUserByEmail')
+  async findOneByEmail(
+    @MessageBody() email: string,
+    @ConnectedSocket() client: Socket,
+  ): Promise<void> {
+    try {
+      const user = await this.usersService.findOneByEmail(email);
+      client.emit('oneUser', user);
+    } catch (e) {
+      client.error(e.message);
+    }
   }
 
   @SubscribeMessage('updateUser')
-  update(@MessageBody() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(updateUserDto.id, updateUserDto);
+  async update(
+    @MessageBody() updateUserDto: UpdateUserDto,
+    @ConnectedSocket() client: Socket,
+  ): Promise<void> {
+    try {
+      const updatedUser = await this.usersService.update(
+        updateUserDto.id,
+        updateUserDto,
+      );
+      if (updatedUser) {
+        client.emit('userUpdated', updatedUser);
+        const users = await this.usersService.findAll();
+        this.server.emit('allUsers', users);
+      }
+    } catch (e) {
+      client.error(e.message);
+    }
   }
 
   @SubscribeMessage('removeUser')
-  remove(@MessageBody() id: number) {
-    return this.usersService.remove(id);
+  async remove(
+    @MessageBody() id: number,
+    @ConnectedSocket() client: Socket,
+  ): Promise<void> {
+    try {
+      await this.usersService.remove(id);
+      const users = await this.usersService.findAll();
+      this.server.emit('allUsers', users);
+    } catch (e) {
+      client.error(e.message);
+    }
   }
 }

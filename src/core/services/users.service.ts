@@ -42,12 +42,12 @@ export class UsersService implements IUsersService {
     if (userEntities) {
       return JSON.parse(JSON.stringify(userEntities));
     } else {
-      throw new Error('Could´t find any stocks');
+      throw new Error('Could´t find any users');
     }
   }
 
   async findOneByID(id: number): Promise<UserModel> {
-    const userEntity = await this.userRepository.findOne(id);
+    const userEntity = await this.userRepository.findOne({ id: id });
 
     if (userEntity) {
       return JSON.parse(JSON.stringify(userEntity));
@@ -65,27 +65,35 @@ export class UsersService implements IUsersService {
     }
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<any> {
-    if (id !== updateUserDto.id) return { message: 'Id does not match' };
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<UserModel> {
+    if (id !== updateUserDto.id) {
+      throw new Error('Id does not match');
+    }
 
-    const updatedUser = await this.userRepository.update(id, updateUserDto);
+    const userToUpdate = await this.userRepository.findOne({ id: id });
+    if (userToUpdate) {
+      await this.userRepository.update(id, updateUserDto);
+      const updatedUser = await this.userRepository.findOne({ id: id });
 
-    if (updatedUser) return { message: 'User was successfully updated!' };
-
-    return { message: 'User was not updated' };
+      if (updatedUser) {
+        return JSON.parse(JSON.stringify(updatedUser));
+      } else {
+        throw new Error('User was not updated');
+      }
+    } else {
+      throw new Error('This user does not exist');
+    }
   }
 
   async remove(id: number): Promise<any> {
-    if (await this.userRepository.findOne(id)) {
+    if (await this.userRepository.findOne({ id: id })) {
       // await this.userRepository.softDelete(id);
-      await this.userRepository.delete(id);
+      await this.userRepository.delete({ id: id });
       return {
         message: 'User was successfully removed!',
       };
     } else {
-      return {
-        message: 'User does not exist!',
-      };
+      throw new Error('User does not exist!');
     }
   }
 }
