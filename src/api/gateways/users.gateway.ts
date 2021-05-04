@@ -9,11 +9,11 @@ import { CreateUserDto } from '../dtos/users/create-user.dto';
 import { UpdateUserDto } from '../dtos/users/update-user.dto';
 import { UsersService } from '../../core/services/users.service';
 import { Inject } from '@nestjs/common';
+import { Socket } from 'socket.io';
 import {
   IUsersService,
   IUsersServiceProvider,
 } from '../../core/primary-ports/user.service.interface';
-import { Socket } from 'socket.io';
 
 @WebSocketGateway()
 export class UsersGateway {
