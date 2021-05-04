@@ -9,13 +9,11 @@ import { ItemsService } from '../../core/services/items.service';
 import { CreateItemDto } from '../dtos/items/create-item.dto';
 import { UpdateItemDto } from '../dtos/items/update-item.dto';
 import { Inject } from '@nestjs/common';
+import { Socket } from 'socket.io';
 import {
   IItemsService,
   IItemsServiceProvider,
 } from '../../core/primary-ports/item.service.interface';
-import { CreateUserDto } from '../dtos/users/create-user.dto';
-import { Socket } from 'socket.io';
-import { UpdateUserDto } from '../dtos/users/update-user.dto';
 
 @WebSocketGateway()
 export class ItemsGateway {

@@ -42,7 +42,9 @@ export class CollectionsService implements ICollectionService {
   }
 
   async findOneByID(id: number): Promise<CollectionModel> {
-    const collectionEntity = await this.collectionRepository.findOne({ id: id });
+    const collectionEntity = await this.collectionRepository.findOne({
+      id: id,
+    });
 
     if (collectionEntity) {
       return JSON.parse(JSON.stringify(collectionEntity));
@@ -58,10 +60,14 @@ export class CollectionsService implements ICollectionService {
     if (id !== updateCollectionDto.id) {
       throw new Error('Id does not match');
     }
-    const collectionToUpdate = await this.collectionRepository.findOne({ id: id });
+    const collectionToUpdate = await this.collectionRepository.findOne({
+      id: id,
+    });
     if (collectionToUpdate) {
       await this.collectionRepository.update(id, updateCollectionDto);
-      const updatedCollection = await this.collectionRepository.findOne({ id: id });
+      const updatedCollection = await this.collectionRepository.findOne({
+        id: id,
+      });
 
       if (updatedCollection) {
         return JSON.parse(JSON.stringify(updatedCollection));
