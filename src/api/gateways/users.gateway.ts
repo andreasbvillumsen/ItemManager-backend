@@ -43,13 +43,14 @@ export class UsersGateway {
   async findAll(@ConnectedSocket() client: Socket): Promise<void> {
     try {
       const users = await this.usersService.findAll();
-     const FrontEndUserDtos : FrontEndUserDto[] = users.map(user => ({
+      const FrontEndUserDtos: FrontEndUserDto[] = users.map((user) => ({
+        id: user.id,
+        email: user.email,
+        firstname: user.firstname,
+        lastname: user.lastname,
+      }));
 
-      id: user.id,email: user.email, firstname: user.firstname,lastname: user.lastname
-
-      }))
-
-      client.emit('allUsers',FrontEndUserDtos );
+      client.emit('allUsers', FrontEndUserDtos);
     } catch (e) {
       client.error(e.message);
     }
