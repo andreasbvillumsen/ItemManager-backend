@@ -5,7 +5,6 @@ import {
   WebSocketServer,
   ConnectedSocket,
 } from '@nestjs/websockets';
-import { ItemsService } from '../../core/services/items.service';
 import { CreateItemDto } from '../dtos/items/create-item.dto';
 import { UpdateItemDto } from '../dtos/items/update-item.dto';
 import { Inject } from '@nestjs/common';
