@@ -6,7 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { UserEntity } from '../../infrastructure/data-source/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from '../../api/dtos/users/create-user.dto';
-import { LoginUserDto } from '../../api/dtos/users/login-user.dto';
+import { LoginDto } from '../../api/dtos/users/login.dto';
 import { UserModel } from '../models/user.model';
 
 @Injectable()
@@ -18,19 +18,19 @@ export class AuthService {
     private userRepository: Repository<UserEntity>,
   ) {}
 
-  async login(loginUserDto: LoginUserDto): Promise<any> {
-    // return loginUserDto;
+  async login(loginDto: LoginDto): Promise<any> {
+    // return loginDto;
     const userFromDB: UserModel = await this.usersService.findOneByEmail(
-      loginUserDto.email,
+      loginDto.email,
     );
 
     if (userFromDB) {
-      if (await bcrypt.compare(loginUserDto.password, userFromDB.password)) {
+      if (await bcrypt.compare(loginDto.password, userFromDB.password)) {
         const payload = { email: userFromDB.email, sub: userFromDB.id };
         userFromDB.password = undefined;
         return {
           user: userFromDB,
-          bearer_token: this.jwtService.sign(payload),
+          token: this.jwtService.sign(payload),
         };
       } else {
         return {
@@ -44,21 +44,21 @@ export class AuthService {
     }
   }
 
-  async register(createUserDto: CreateUserDto): Promise<any> {
+  async register(registerDto: CreateUserDto): Promise<any> {
     // return createUserDto;
-    if (await this.userRepository.findOne({ email: createUserDto.email }))
+    if (await this.userRepository.findOne({ email: registerDto.email }))
       return {
         error: 'Email in use. Please use another email.',
       };
 
     // Create user
     // return createUserDto;
-    const userModel = await this.usersService.create(createUserDto);
+    const userModel = await this.usersService.create(registerDto);
 
     // Return user info and authentication bearer token.
     return {
       user: userModel,
-      bearer_token: this.jwtService.sign({
+      token: this.jwtService.sign({
         email: userModel.email,
         sub: userModel.id,
       }),
