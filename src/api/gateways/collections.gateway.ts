@@ -14,9 +14,7 @@ import {
   ICollectionService,
   ICollectionServiceProvider,
 } from '../../core/primary-ports/collection.service.interface';
-import { CreateUserDto } from '../dtos/users/create-user.dto';
 import { Socket } from 'socket.io';
-import { UpdateUserDto } from "../dtos/users/update-user.dto";
 
 @WebSocketGateway()
 export class CollectionsGateway {

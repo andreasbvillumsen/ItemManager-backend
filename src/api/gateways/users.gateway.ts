@@ -7,7 +7,6 @@ import {
 } from '@nestjs/websockets';
 import { CreateUserDto } from '../dtos/users/create-user.dto';
 import { UpdateUserDto } from '../dtos/users/update-user.dto';
-import { UsersService } from '../../core/services/users.service';
 import { Inject } from '@nestjs/common';
 import {
   IUsersService,
