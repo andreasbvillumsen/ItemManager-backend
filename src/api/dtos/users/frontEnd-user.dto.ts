@@ -5,5 +5,4 @@ export class FrontEndUserDto {
   email: string;
   firstname: string;
   lastname: string;
-  //collectionIds: number[];
 }

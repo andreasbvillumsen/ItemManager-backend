@@ -15,6 +15,8 @@ import {
   ICollectionService,
   ICollectionServiceProvider,
 } from '../../core/primary-ports/collection.service.interface';
+import { FrontEndUserDto } from '../dtos/users/frontEnd-user.dto';
+import { frontEndCollectionDto } from '../dtos/collections/frontEnd-collection.dto';
 
 @WebSocketGateway()
 export class CollectionsGateway {
@@ -36,7 +38,13 @@ export class CollectionsGateway {
       );
       if (newCollection) {
         const collections = await this.collectionsService.findAll();
-        this.server.emit('allCollections', collections);
+        const frontEndCollectionDtos: frontEndCollectionDto[] = collections.map(
+          (collection) => ({
+            id: collection.id,
+            name: collection.name,
+          }),
+        );
+        this.server.emit('allCollections', frontEndCollectionDtos);
       }
     } catch (e) {
       client.error(e.message);
@@ -47,7 +55,13 @@ export class CollectionsGateway {
   async findAll(@ConnectedSocket() client: Socket): Promise<void> {
     try {
       const collections = await this.collectionsService.findAll();
-      client.emit('allCollections', collections);
+      const frontEndCollectionDtos: frontEndCollectionDto[] = collections.map(
+        (collection) => ({
+          id: collection.id,
+          name: collection.name,
+        }),
+      );
+      client.emit('allCollections', frontEndCollectionDtos);
     } catch (e) {
       client.error(e.message);
     }
@@ -60,7 +74,11 @@ export class CollectionsGateway {
   ): Promise<void> {
     try {
       const collection = await this.collectionsService.findOneByID(id);
-      client.emit('oneCollection', collection);
+      const frontEndCollectionDto: frontEndCollectionDto = {
+        id: collection.id,
+        name: collection.name,
+      };
+      client.emit('oneCollection', frontEndCollectionDto);
     } catch (e) {
       client.error(e.message);
     }
@@ -77,9 +95,19 @@ export class CollectionsGateway {
         updateCollectionDto,
       );
       if (updatedCollection) {
-        client.emit('collectionUpdated', updatedCollection);
+        const frontEndCollectionDto: frontEndCollectionDto = {
+          id: updatedCollection.id,
+          name: updatedCollection.name,
+        };
+        client.emit('collectionUpdated', frontEndCollectionDto);
         const collections = await this.collectionsService.findAll();
-        client.emit('allCollections', collections);
+        const frontEndCollectionDtos: frontEndCollectionDto[] = collections.map(
+          (collection) => ({
+            id: collection.id,
+            name: collection.name,
+          }),
+        );
+        client.emit('allCollections', frontEndCollectionDtos);
       }
     } catch (e) {
       client.error(e.message);
@@ -94,7 +122,13 @@ export class CollectionsGateway {
     try {
       await this.collectionsService.remove(id);
       const collections = await this.collectionsService.findAll();
-      client.emit('allCollections', collections);
+      const frontEndCollectionDtos: frontEndCollectionDto[] = collections.map(
+        (collection) => ({
+          id: collection.id,
+          name: collection.name,
+        }),
+      );
+      client.emit('allCollections', frontEndCollectionDtos);
     } catch (e) {
       client.error(e.message);
     }
