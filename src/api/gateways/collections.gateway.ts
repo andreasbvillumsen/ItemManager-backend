@@ -57,6 +57,7 @@ export class CollectionsGateway {
   @SubscribeMessage('findAllCollections')
   async findAll(@ConnectedSocket() client: Socket): Promise<void> {
     try {
+      console.log('find all');
       const collections = await this.collectionsService.findAll();
       const frontEndCollectionDtos: ReadCollectionDto[] = collections.map(
         (collection) => ({
@@ -64,9 +65,9 @@ export class CollectionsGateway {
           name: collection.name,
         }),
       );
-      client.emit('allCollections', frontEndCollectionDtos);
+      this.server.emit('allCollections', frontEndCollectionDtos);
     } catch (e) {
-      client.error(e.message);
+      this.server.emit.error(e.message);
     }
   }
 
