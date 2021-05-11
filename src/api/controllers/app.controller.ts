@@ -10,10 +10,13 @@ import { AuthService } from '../../core/services/auth.service';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { CreateUserDto } from '../dtos/users/create-user.dto';
 import { LoginDto } from '../dtos/users/login.dto';
+import { CreateCollectionDto } from '../dtos/collections/create-collection.dto';
+import { CollectionsService } from '../../core/services/collections.service';
+import { ICollectionService } from '../../core/primary-ports/collection.service.interface';
 
 @Controller()
 export class AppController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private collectionService: CollectionsService) {}
 
   // @UseGuards(LocalAuthGuard)
   @Post('auth/login')
@@ -31,5 +34,11 @@ export class AppController {
   async register(@Request() req, @Body() createUserDto: CreateUserDto) {
     // return createUserDto;
     return this.authService.register(createUserDto);
+  }
+
+  @Post('auth/controller')
+  async createCollection(@Request() req, @Body() createCollectionDto: CreateCollectionDto) {
+    // return createUserDto;
+    return this.collectionService.create(createCollectionDto);
   }
 }

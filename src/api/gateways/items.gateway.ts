@@ -13,6 +13,7 @@ import {
   IItemsService,
   IItemsServiceProvider,
 } from '../../core/primary-ports/item.service.interface';
+import { ReadItemDto } from '../dtos/items/read-item.dto';
 
 @WebSocketGateway()
 export class ItemsGateway {
@@ -30,7 +31,12 @@ export class ItemsGateway {
       const newItem = await this.itemsService.create(createItemDto);
       if (newItem) {
         const items = await this.itemsService.findAll();
-        this.server.emit('allItems', items);
+        const frontEndItemDtos: ReadItemDto[] = items.map((item) => ({
+          id: item.id,
+          name: item.name,
+          desc: item.desc,
+        }));
+        this.server.emit('allItems', frontEndItemDtos);
       }
     } catch (e) {
       client.error(e.message);
@@ -41,7 +47,12 @@ export class ItemsGateway {
   async findAll(@ConnectedSocket() client: Socket): Promise<void> {
     try {
       const items = await this.itemsService.findAll();
-      client.emit('allItems', items);
+      const frontEndItemDtos: ReadItemDto[] = items.map((item) => ({
+        id: item.id,
+        name: item.name,
+        desc: item.desc,
+      }));
+      client.emit('allItems', frontEndItemDtos);
     } catch (e) {
       client.error(e.message);
     }
@@ -54,7 +65,13 @@ export class ItemsGateway {
   ): Promise<void> {
     try {
       const item = await this.itemsService.findOneByID(id);
-      client.emit('oneItem', item);
+      const frontEndItemDto: ReadItemDto = {
+        id: item.id,
+        name: item.name,
+        desc: item.desc,
+      };
+
+      client.emit('oneItem', frontEndItemDto);
     } catch (e) {
       client.error(e.message);
     }
@@ -71,9 +88,21 @@ export class ItemsGateway {
         updateItemDto,
       );
       if (updatedItem) {
-        client.emit('itemUpdated', updatedItem);
-        const users = await this.itemsService.findAll();
-        this.server.emit('allItems', users);
+        const frontEndItemDto: ReadItemDto = {
+          id: updatedItem.id,
+          name: updatedItem.name,
+          desc: updatedItem.desc,
+        };
+        client.emit('itemUpdated', frontEndItemDto);
+
+        const items = await this.itemsService.findAll();
+        const frontEndItemDtos: ReadItemDto[] = items.map((item) => ({
+          id: item.id,
+          name: item.name,
+          desc: item.desc,
+        }));
+
+        this.server.emit('allItems', frontEndItemDtos);
       }
     } catch (e) {
       client.error(e.message);
@@ -88,7 +117,13 @@ export class ItemsGateway {
     try {
       await this.itemsService.remove(id);
       const items = await this.itemsService.findAll();
-      this.server.emit('allItems', items);
+      const frontEndItemDtos: ReadItemDto[] = items.map((item) => ({
+        id: item.id,
+        name: item.name,
+        desc: item.desc,
+      }));
+
+      this.server.emit('allItems', frontEndItemDtos);
     } catch (e) {
       client.error(e.message);
     }

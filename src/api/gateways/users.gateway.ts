@@ -13,7 +13,7 @@ import {
   IUsersService,
   IUsersServiceProvider,
 } from '../../core/primary-ports/user.service.interface';
-import { FrontEndUserDto } from '../dtos/users/frontEnd-user.dto';
+import { ReadUserDto } from '../dtos/users/read-user.dto';
 
 @WebSocketGateway()
 export class UsersGateway {
@@ -31,7 +31,14 @@ export class UsersGateway {
       const newUser = await this.usersService.create(createUserDto);
       if (newUser) {
         const users = await this.usersService.findAll();
-        this.server.emit('allUsers', users);
+        const frontEndUserDtos: ReadUserDto[] = users.map((user) => ({
+          id: user.id,
+          email: user.email,
+          firstname: user.firstname,
+          lastname: user.lastname,
+        }));
+
+        this.server.emit('allUsers', frontEndUserDtos);
       }
     } catch (e) {
       client.error(e.message);
@@ -42,14 +49,14 @@ export class UsersGateway {
   async findAll(@ConnectedSocket() client: Socket): Promise<void> {
     try {
       const users = await this.usersService.findAll();
-      const FrontEndUserDtos: FrontEndUserDto[] = users.map((user) => ({
+      const frontEndUserDtos: ReadUserDto[] = users.map((user) => ({
         id: user.id,
         email: user.email,
         firstname: user.firstname,
         lastname: user.lastname,
       }));
 
-      client.emit('allUsers', FrontEndUserDtos);
+      client.emit('allUsers', frontEndUserDtos);
     } catch (e) {
       client.error(e.message);
     }
@@ -62,7 +69,14 @@ export class UsersGateway {
   ): Promise<void> {
     try {
       const user = await this.usersService.findOneByID(id);
-      client.emit('oneUser', user);
+      const frontEndUser: ReadUserDto = {
+        id: user.id,
+        email: user.email,
+        firstname: user.firstname,
+        lastname: user.lastname,
+      };
+
+      client.emit('oneUser', frontEndUser);
     } catch (e) {
       client.error(e.message);
     }
@@ -75,7 +89,14 @@ export class UsersGateway {
   ): Promise<void> {
     try {
       const user = await this.usersService.findOneByEmail(email);
-      client.emit('oneUser', user);
+      const frontEndUser: ReadUserDto = {
+        id: user.id,
+        email: user.email,
+        firstname: user.firstname,
+        lastname: user.lastname,
+      };
+
+      client.emit('oneUser', frontEndUser);
     } catch (e) {
       client.error(e.message);
     }
@@ -92,9 +113,22 @@ export class UsersGateway {
         updateUserDto,
       );
       if (updatedUser) {
-        client.emit('userUpdated', updatedUser);
+        const frontEndUser: ReadUserDto = {
+          id: updatedUser.id,
+          email: updatedUser.email,
+          firstname: updatedUser.firstname,
+          lastname: updatedUser.lastname,
+        };
+        client.emit('userUpdated', frontEndUser);
         const users = await this.usersService.findAll();
-        this.server.emit('allUsers', users);
+        const frontEndUserDtos: ReadUserDto[] = users.map((user) => ({
+          id: user.id,
+          email: user.email,
+          firstname: user.firstname,
+          lastname: user.lastname,
+        }));
+
+        this.server.emit('allUsers', frontEndUserDtos);
       }
     } catch (e) {
       client.error(e.message);
@@ -109,7 +143,14 @@ export class UsersGateway {
     try {
       await this.usersService.remove(id);
       const users = await this.usersService.findAll();
-      this.server.emit('allUsers', users);
+      const frontEndUserDtos: ReadUserDto[] = users.map((user) => ({
+        id: user.id,
+        email: user.email,
+        firstname: user.firstname,
+        lastname: user.lastname,
+      }));
+
+      this.server.emit('allUsers', frontEndUserDtos);
     } catch (e) {
       client.error(e.message);
     }

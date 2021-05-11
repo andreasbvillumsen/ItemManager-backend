@@ -9,6 +9,9 @@ export class ItemEntity {
   @Column()
   name: string;
 
+  @Column()
+  desc: string;
+
   @ManyToOne(() => CollectionEntity, (collection) => collection.items)
   collection: CollectionEntity;
 }
