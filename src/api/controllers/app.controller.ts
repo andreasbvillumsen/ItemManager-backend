@@ -12,11 +12,13 @@ import { CreateUserDto } from '../dtos/users/create-user.dto';
 import { LoginDto } from '../dtos/users/login.dto';
 import { CreateCollectionDto } from '../dtos/collections/create-collection.dto';
 import { CollectionsService } from '../../core/services/collections.service';
-import { ICollectionService } from '../../core/primary-ports/collection.service.interface';
 
 @Controller()
 export class AppController {
-  constructor(private authService: AuthService, private collectionService: CollectionsService) {}
+  constructor(
+    private authService: AuthService,
+    private collectionService: CollectionsService,
+  ) {}
 
   // @UseGuards(LocalAuthGuard)
   @Post('auth/login')

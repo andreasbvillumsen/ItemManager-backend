@@ -61,7 +61,8 @@ export class CollectionsService implements ICollectionService {
       where: { id: id },
       relations: ['collections'],
     });
-
+    console.log('why');
+    console.log(userEntity);
     if (userEntity.collections) {
       return JSON.parse(JSON.stringify(userEntity.collections));
     } else {

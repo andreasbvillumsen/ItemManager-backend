@@ -72,11 +72,12 @@ export class CollectionsGateway {
 
   @SubscribeMessage('findAllCollectionsByUserID')
   async findAllByUserID(
-    @MessageBody() id: number,
+    @MessageBody() userid: number,
     @ConnectedSocket() client: Socket,
   ): Promise<void> {
     try {
-      const collections = await this.collectionsService.findAllByUserID(id);
+      console.log('why');
+      const collections = await this.collectionsService.findAllByUserID(userid);
       const frontEndCollectionDtos: ReadCollectionDto[] = collections.map(
         (collection) => ({
           id: collection.id,
@@ -109,7 +110,7 @@ export class CollectionsGateway {
   @SubscribeMessage('updateCollection')
   async update(
     @MessageBody() updateCollectionDto: UpdateCollectionDto,
-    @MessageBody() Userid: number,
+    @MessageBody() userid: number,
     @ConnectedSocket() client: Socket,
   ): Promise<void> {
     try {
@@ -124,7 +125,7 @@ export class CollectionsGateway {
         };
         client.emit('collectionUpdated', frontEndCollectionDto);
         const collections = await this.collectionsService.findAllByUserID(
-          Userid,
+          userid,
         );
         const frontEndCollectionDtos: ReadCollectionDto[] = collections.map(
           (collection) => ({
@@ -139,15 +140,15 @@ export class CollectionsGateway {
     }
   }
 
-  @SubscribeMessage('removeCollection')
+  @SubscribeMessage('deleteCollection')
   async remove(
     @MessageBody() collectionId: number,
-    @MessageBody() Userid: number,
+    @MessageBody() userid: number,
     @ConnectedSocket() client: Socket,
   ): Promise<void> {
     try {
       await this.collectionsService.remove(collectionId);
-      const collections = await this.collectionsService.findAllByUserID(Userid);
+      const collections = await this.collectionsService.findAllByUserID(userid);
       const frontEndCollectionDtos: ReadCollectionDto[] = collections.map(
         (collection) => ({
           id: collection.id,
