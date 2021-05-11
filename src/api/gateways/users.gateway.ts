@@ -13,7 +13,7 @@ import {
   IUsersService,
   IUsersServiceProvider,
 } from '../../core/primary-ports/user.service.interface';
-import { FrontEndUserDto } from '../dtos/users/frontEnd-user.dto';
+import { ReadUserDto } from '../dtos/users/read-user.dto';
 
 @WebSocketGateway()
 export class UsersGateway {
@@ -31,7 +31,7 @@ export class UsersGateway {
       const newUser = await this.usersService.create(createUserDto);
       if (newUser) {
         const users = await this.usersService.findAll();
-        const frontEndUserDtos: FrontEndUserDto[] = users.map((user) => ({
+        const frontEndUserDtos: ReadUserDto[] = users.map((user) => ({
           id: user.id,
           email: user.email,
           firstname: user.firstname,
@@ -49,7 +49,7 @@ export class UsersGateway {
   async findAll(@ConnectedSocket() client: Socket): Promise<void> {
     try {
       const users = await this.usersService.findAll();
-      const frontEndUserDtos: FrontEndUserDto[] = users.map((user) => ({
+      const frontEndUserDtos: ReadUserDto[] = users.map((user) => ({
         id: user.id,
         email: user.email,
         firstname: user.firstname,
@@ -69,7 +69,7 @@ export class UsersGateway {
   ): Promise<void> {
     try {
       const user = await this.usersService.findOneByID(id);
-      const frontEndUser: FrontEndUserDto = {
+      const frontEndUser: ReadUserDto = {
         id: user.id,
         email: user.email,
         firstname: user.firstname,
@@ -89,7 +89,7 @@ export class UsersGateway {
   ): Promise<void> {
     try {
       const user = await this.usersService.findOneByEmail(email);
-      const frontEndUser: FrontEndUserDto = {
+      const frontEndUser: ReadUserDto = {
         id: user.id,
         email: user.email,
         firstname: user.firstname,
@@ -113,7 +113,7 @@ export class UsersGateway {
         updateUserDto,
       );
       if (updatedUser) {
-        const frontEndUser: FrontEndUserDto = {
+        const frontEndUser: ReadUserDto = {
           id: updatedUser.id,
           email: updatedUser.email,
           firstname: updatedUser.firstname,
@@ -121,7 +121,7 @@ export class UsersGateway {
         };
         client.emit('userUpdated', frontEndUser);
         const users = await this.usersService.findAll();
-        const frontEndUserDtos: FrontEndUserDto[] = users.map((user) => ({
+        const frontEndUserDtos: ReadUserDto[] = users.map((user) => ({
           id: user.id,
           email: user.email,
           firstname: user.firstname,
@@ -143,7 +143,7 @@ export class UsersGateway {
     try {
       await this.usersService.remove(id);
       const users = await this.usersService.findAll();
-      const frontEndUserDtos: FrontEndUserDto[] = users.map((user) => ({
+      const frontEndUserDtos: ReadUserDto[] = users.map((user) => ({
         id: user.id,
         email: user.email,
         firstname: user.firstname,

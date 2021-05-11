@@ -13,7 +13,7 @@ import {
   IItemsService,
   IItemsServiceProvider,
 } from '../../core/primary-ports/item.service.interface';
-import { frontEndItemDto } from '../dtos/items/frontEnd-item.dto';
+import { ReadItemDto } from '../dtos/items/read-item.dto';
 
 @WebSocketGateway()
 export class ItemsGateway {
@@ -31,7 +31,7 @@ export class ItemsGateway {
       const newItem = await this.itemsService.create(createItemDto);
       if (newItem) {
         const items = await this.itemsService.findAll();
-        const frontEndItemDtos: frontEndItemDto[] = items.map((item) => ({
+        const frontEndItemDtos: ReadItemDto[] = items.map((item) => ({
           id: item.id,
           name: item.name,
           desc: item.desc,
@@ -47,7 +47,7 @@ export class ItemsGateway {
   async findAll(@ConnectedSocket() client: Socket): Promise<void> {
     try {
       const items = await this.itemsService.findAll();
-      const frontEndItemDtos: frontEndItemDto[] = items.map((item) => ({
+      const frontEndItemDtos: ReadItemDto[] = items.map((item) => ({
         id: item.id,
         name: item.name,
         desc: item.desc,
@@ -65,7 +65,7 @@ export class ItemsGateway {
   ): Promise<void> {
     try {
       const item = await this.itemsService.findOneByID(id);
-      const frontEndItemDto: frontEndItemDto = {
+      const frontEndItemDto: ReadItemDto = {
         id: item.id,
         name: item.name,
         desc: item.desc,
@@ -88,7 +88,7 @@ export class ItemsGateway {
         updateItemDto,
       );
       if (updatedItem) {
-        const frontEndItemDto: frontEndItemDto = {
+        const frontEndItemDto: ReadItemDto = {
           id: updatedItem.id,
           name: updatedItem.name,
           desc: updatedItem.desc,
@@ -96,7 +96,7 @@ export class ItemsGateway {
         client.emit('itemUpdated', frontEndItemDto);
 
         const items = await this.itemsService.findAll();
-        const frontEndItemDtos: frontEndItemDto[] = items.map((item) => ({
+        const frontEndItemDtos: ReadItemDto[] = items.map((item) => ({
           id: item.id,
           name: item.name,
           desc: item.desc,
@@ -117,7 +117,7 @@ export class ItemsGateway {
     try {
       await this.itemsService.remove(id);
       const items = await this.itemsService.findAll();
-      const frontEndItemDtos: frontEndItemDto[] = items.map((item) => ({
+      const frontEndItemDtos: ReadItemDto[] = items.map((item) => ({
         id: item.id,
         name: item.name,
         desc: item.desc,

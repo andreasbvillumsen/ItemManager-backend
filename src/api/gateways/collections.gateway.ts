@@ -15,8 +15,8 @@ import {
   ICollectionService,
   ICollectionServiceProvider,
 } from '../../core/primary-ports/collection.service.interface';
-import { FrontEndUserDto } from '../dtos/users/frontEnd-user.dto';
-import { frontEndCollectionDto } from '../dtos/collections/frontEnd-collection.dto';
+import { ReadUserDto } from '../dtos/users/read-user.dto';
+import { ReadCollectionDto } from '../dtos/collections/read-collection.dto';
 
 @WebSocketGateway()
 export class CollectionsGateway {
@@ -38,7 +38,7 @@ export class CollectionsGateway {
       );
       if (newCollection) {
         const collections = await this.collectionsService.findAll();
-        const frontEndCollectionDtos: frontEndCollectionDto[] = collections.map(
+        const frontEndCollectionDtos: ReadCollectionDto[] = collections.map(
           (collection) => ({
             id: collection.id,
             name: collection.name,
@@ -55,7 +55,7 @@ export class CollectionsGateway {
   async findAll(@ConnectedSocket() client: Socket): Promise<void> {
     try {
       const collections = await this.collectionsService.findAll();
-      const frontEndCollectionDtos: frontEndCollectionDto[] = collections.map(
+      const frontEndCollectionDtos: ReadCollectionDto[] = collections.map(
         (collection) => ({
           id: collection.id,
           name: collection.name,
@@ -74,7 +74,7 @@ export class CollectionsGateway {
   ): Promise<void> {
     try {
       const collection = await this.collectionsService.findOneByID(id);
-      const frontEndCollectionDto: frontEndCollectionDto = {
+      const frontEndCollectionDto: ReadCollectionDto = {
         id: collection.id,
         name: collection.name,
       };
@@ -95,13 +95,13 @@ export class CollectionsGateway {
         updateCollectionDto,
       );
       if (updatedCollection) {
-        const frontEndCollectionDto: frontEndCollectionDto = {
+        const frontEndCollectionDto: ReadCollectionDto = {
           id: updatedCollection.id,
           name: updatedCollection.name,
         };
         client.emit('collectionUpdated', frontEndCollectionDto);
         const collections = await this.collectionsService.findAll();
-        const frontEndCollectionDtos: frontEndCollectionDto[] = collections.map(
+        const frontEndCollectionDtos: ReadCollectionDto[] = collections.map(
           (collection) => ({
             id: collection.id,
             name: collection.name,
@@ -122,7 +122,7 @@ export class CollectionsGateway {
     try {
       await this.collectionsService.remove(id);
       const collections = await this.collectionsService.findAll();
-      const frontEndCollectionDtos: frontEndCollectionDto[] = collections.map(
+      const frontEndCollectionDtos: ReadCollectionDto[] = collections.map(
         (collection) => ({
           id: collection.id,
           name: collection.name,
