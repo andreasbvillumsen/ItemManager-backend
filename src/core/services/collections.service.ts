@@ -6,12 +6,15 @@ import { Repository } from 'typeorm';
 import { CollectionEntity } from '../../infrastructure/data-source/entities/collection.entity';
 import { CollectionModel } from '../models/collection.model';
 import { ICollectionService } from '../primary-ports/collection.service.interface';
+import { UserEntity } from '../../infrastructure/data-source/entities/user.entity';
 
 @Injectable()
 export class CollectionsService implements ICollectionService {
   constructor(
     @InjectRepository(CollectionEntity)
     private collectionRepository: Repository<CollectionEntity>,
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
   ) {}
 
   async create(
@@ -50,6 +53,19 @@ export class CollectionsService implements ICollectionService {
       return JSON.parse(JSON.stringify(collectionEntity));
     } else {
       throw new Error("Can't find a collection with this id");
+    }
+  }
+
+  async findAllByUserID(id: number): Promise<CollectionModel[]> {
+    const userEntity = await this.userRepository.findOne({
+      where: { id: id },
+      relations: ['collections'],
+    });
+
+    if (userEntity.collections) {
+      return JSON.parse(JSON.stringify(userEntity.collections));
+    } else {
+      throw new Error('Could´t find any collections for this user');
     }
   }
 

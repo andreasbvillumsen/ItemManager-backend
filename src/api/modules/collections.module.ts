@@ -4,9 +4,10 @@ import { CollectionsGateway } from '../gateways/collections.gateway';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CollectionEntity } from '../../infrastructure/data-source/entities/collection.entity';
 import { ICollectionServiceProvider } from '../../core/primary-ports/collection.service.interface';
+import { UserEntity } from '../../infrastructure/data-source/entities/user.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CollectionEntity])],
+  imports: [TypeOrmModule.forFeature([CollectionEntity, UserEntity])],
   providers: [
     CollectionsGateway,
     {
