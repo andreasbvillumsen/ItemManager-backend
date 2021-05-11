@@ -37,23 +37,17 @@ export class AuthService {
           token: this.jwtService.sign(payload),
         };
       } else {
-        return {
-          error: 'Password is not correct',
-        };
+        throw new Error('Password is not correct');
       }
     } else {
-      return {
-        error: 'User not found',
-      };
+      throw new Error('User not found');
     }
   }
 
   async register(registerDto: CreateUserDto): Promise<any> {
     // return createUserDto;
     if (await this.userRepository.findOne({ email: registerDto.email }))
-      return {
-        error: 'Email in use. Please use another email.',
-      };
+      throw new Error('Email in use. Please use another email.');
 
     // Create user
     // return createUserDto;
