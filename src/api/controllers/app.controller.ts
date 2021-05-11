@@ -43,4 +43,10 @@ export class AppController {
     // return createUserDto;
     return this.collectionService.create(createCollectionDto);
   }
+
+  @Get('auth/controller')
+  async GetCollection(@Request() req) {
+    // return createUserDto;
+    return this.collectionService.findAllByUserID(1);
+  }
 }
