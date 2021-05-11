@@ -67,6 +67,25 @@ export class CollectionsGateway {
     }
   }
 
+  @SubscribeMessage('findAllCollectionsByUserID')
+  async findAllByUserID(
+    @MessageBody() id: number,
+    @ConnectedSocket() client: Socket,
+  ): Promise<void> {
+    try {
+      const collections = await this.collectionsService.findAllByUserID(id);
+      const frontEndCollectionDtos: ReadCollectionDto[] = collections.map(
+        (collection) => ({
+          id: collection.id,
+          name: collection.name,
+        }),
+      );
+      client.emit('allCollectionsForUser', frontEndCollectionDtos);
+    } catch (e) {
+      client.error(e.message);
+    }
+  }
+
   @SubscribeMessage('findOneCollection')
   async findOne(
     @MessageBody() id: number,
