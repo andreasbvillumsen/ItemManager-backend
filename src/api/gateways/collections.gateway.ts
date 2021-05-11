@@ -30,6 +30,7 @@ export class CollectionsGateway {
   @SubscribeMessage('createCollection')
   async create(
     @MessageBody() createCollectionDto: CreateCollectionDto,
+    @MessageBody() Userid: number,
     @ConnectedSocket() client: Socket,
   ): Promise<void> {
     try {
@@ -37,14 +38,16 @@ export class CollectionsGateway {
         createCollectionDto,
       );
       if (newCollection) {
-        const collections = await this.collectionsService.findAll();
+        const collections = await this.collectionsService.findAllByUserID(
+          Userid,
+        );
         const frontEndCollectionDtos: ReadCollectionDto[] = collections.map(
           (collection) => ({
             id: collection.id,
             name: collection.name,
           }),
         );
-        this.server.emit('allCollections', frontEndCollectionDtos);
+        this.server.emit('allCollectionsForUser', frontEndCollectionDtos);
       }
     } catch (e) {
       client.error(e.message);
@@ -106,6 +109,7 @@ export class CollectionsGateway {
   @SubscribeMessage('updateCollection')
   async update(
     @MessageBody() updateCollectionDto: UpdateCollectionDto,
+    @MessageBody() Userid: number,
     @ConnectedSocket() client: Socket,
   ): Promise<void> {
     try {
@@ -119,14 +123,16 @@ export class CollectionsGateway {
           name: updatedCollection.name,
         };
         client.emit('collectionUpdated', frontEndCollectionDto);
-        const collections = await this.collectionsService.findAll();
+        const collections = await this.collectionsService.findAllByUserID(
+          Userid,
+        );
         const frontEndCollectionDtos: ReadCollectionDto[] = collections.map(
           (collection) => ({
             id: collection.id,
             name: collection.name,
           }),
         );
-        client.emit('allCollections', frontEndCollectionDtos);
+        client.emit('allCollectionsForUser', frontEndCollectionDtos);
       }
     } catch (e) {
       client.error(e.message);
@@ -135,19 +141,20 @@ export class CollectionsGateway {
 
   @SubscribeMessage('removeCollection')
   async remove(
-    @MessageBody() id: number,
+    @MessageBody() collectionId: number,
+    @MessageBody() Userid: number,
     @ConnectedSocket() client: Socket,
   ): Promise<void> {
     try {
-      await this.collectionsService.remove(id);
-      const collections = await this.collectionsService.findAll();
+      await this.collectionsService.remove(collectionId);
+      const collections = await this.collectionsService.findAllByUserID(Userid);
       const frontEndCollectionDtos: ReadCollectionDto[] = collections.map(
         (collection) => ({
           id: collection.id,
           name: collection.name,
         }),
       );
-      client.emit('allCollections', frontEndCollectionDtos);
+      client.emit('allCollectionsForUser', frontEndCollectionDtos);
     } catch (e) {
       client.error(e.message);
     }
