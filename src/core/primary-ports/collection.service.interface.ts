@@ -10,6 +10,8 @@ export interface ICollectionService {
 
   findOneByID(id: number): Promise<CollectionModel>;
 
+  findAllByUserID(id: number): Promise<CollectionModel>;
+
   update(
     id: number,
     updateCollectionDto: UpdateCollectionDto,
