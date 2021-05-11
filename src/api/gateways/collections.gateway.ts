@@ -75,8 +75,8 @@ export class CollectionsGateway {
     @MessageBody() userid: number,
     @ConnectedSocket() client: Socket,
   ): Promise<void> {
+    console.log('findAllByUserID');
     try {
-      console.log('why');
       const collections = await this.collectionsService.findAllByUserID(userid);
       const frontEndCollectionDtos: ReadCollectionDto[] = collections.map(
         (collection) => ({
@@ -159,5 +159,16 @@ export class CollectionsGateway {
     } catch (e) {
       client.error(e.message);
     }
+  }
+  async handleConnection(client: Socket, ...args: any[]): Promise<any> {
+    try {
+      console.log('Client Connect', client.id);
+    } catch (e) {
+      client.error(e.message);
+    }
+  }
+
+  async handleDisconnect(client: Socket): Promise<any> {
+    console.log('Client Disconnect', client.id);
   }
 }
