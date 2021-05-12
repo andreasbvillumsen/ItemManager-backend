@@ -4,9 +4,10 @@ import { ItemsGateway } from '../gateways/items.gateway';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ItemEntity } from '../../infrastructure/data-source/entities/item.entity';
 import { IItemsServiceProvider } from '../../core/primary-ports/item.service.interface';
+import { CollectionEntity } from '../../infrastructure/data-source/entities/collection.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ItemEntity])],
+  imports: [TypeOrmModule.forFeature([ItemEntity, CollectionEntity])],
   providers: [
     ItemsGateway,
     {

@@ -6,12 +6,15 @@ import { Repository } from 'typeorm';
 import { ItemEntity } from '../../infrastructure/data-source/entities/item.entity';
 import { ItemModel } from '../models/item.model';
 import { IItemsService } from '../primary-ports/item.service.interface';
+import { CollectionEntity } from '../../infrastructure/data-source/entities/collection.entity';
 
 @Injectable()
 export class ItemsService implements IItemsService {
   constructor(
     @InjectRepository(ItemEntity)
     private itemRepository: Repository<ItemEntity>,
+    @InjectRepository(CollectionEntity)
+    private collectionRepository: Repository<CollectionEntity>,
   ) {}
 
   async create(createItemDto: CreateItemDto): Promise<ItemModel> {
@@ -42,6 +45,20 @@ export class ItemsService implements IItemsService {
       throw new Error("Can't find a item with this id");
     }
   }
+
+  /*async findAllByCollectionID(id: number): Promise<ItemModel[]> {
+    const userEntity = await this.userRepository.findOne({
+      where: { id: id },
+      relations: ['collections'],
+    });
+    console.log('why');
+    console.log(userEntity);
+    if (userEntity.collections) {
+      return JSON.parse(JSON.stringify(userEntity.collections));
+    } else {
+      throw new Error('Could´t find any collections for this user');
+    }
+  }*/
 
   async update(id: number, updateItemDto: UpdateItemDto): Promise<ItemModel> {
     if (id !== updateItemDto.id) {
