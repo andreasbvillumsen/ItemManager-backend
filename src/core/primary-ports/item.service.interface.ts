@@ -8,6 +8,8 @@ export interface IItemsService {
 
   findAll(): Promise<ItemModel[]>;
 
+  findAllByCollectionId(id: number): Promise<ItemModel[]>;
+
   findOneByID(id: number): Promise<ItemModel>;
 
   update(id: number, updateItemDto: UpdateItemDto): Promise<ItemModel>;

@@ -14,6 +14,7 @@ import {
   IItemsServiceProvider,
 } from '../../core/primary-ports/item.service.interface';
 import { ReadItemDto } from '../dtos/items/read-item.dto';
+import { ReadCollectionDto } from '../dtos/collections/read-collection.dto';
 
 @WebSocketGateway()
 export class ItemsGateway {
@@ -47,6 +48,25 @@ export class ItemsGateway {
   async findAll(@ConnectedSocket() client: Socket): Promise<void> {
     try {
       const items = await this.itemsService.findAll();
+      const frontEndItemDtos: ReadItemDto[] = items.map((item) => ({
+        id: item.id,
+        name: item.name,
+        desc: item.desc,
+      }));
+      client.emit('allItems', frontEndItemDtos);
+    } catch (e) {
+      client.error(e.message);
+    }
+  }
+
+  @SubscribeMessage('getItemsInCollection')
+  async findAllByCollectionID(
+    @MessageBody() collectionId: number,
+    @ConnectedSocket() client: Socket,
+  ): Promise<void> {
+    console.log('findAllByCollectionID');
+    try {
+      const items = await this.itemsService.findAllByCollectionId(collectionId);
       const frontEndItemDtos: ReadItemDto[] = items.map((item) => ({
         id: item.id,
         name: item.name,

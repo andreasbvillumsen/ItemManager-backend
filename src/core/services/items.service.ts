@@ -90,4 +90,18 @@ export class ItemsService implements IItemsService {
       throw new Error('Item does not exist!');
     }
   }
+
+  async findAllByCollectionId(id: number): Promise<ItemModel[]> {
+    const collectionEntity = await this.collectionRepository.findOne({
+      where: { id: id },
+      relations: ['items'],
+    });
+    console.log('findAllByCollectionId');
+    console.log(collectionEntity);
+    if (collectionEntity.items) {
+      return JSON.parse(JSON.stringify(collectionEntity.items));
+    } else {
+      throw new Error('Could´t find any items for this collection');
+    }
+  }
 }
