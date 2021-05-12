@@ -12,10 +12,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CollectionsModule } from './collections.module';
 import { CollectionsService } from '../../core/services/collections.service';
 import { CollectionEntity } from '../../infrastructure/data-source/entities/collection.entity';
+import { ItemsService } from '../../core/services/items.service';
+import { ItemEntity } from '../../infrastructure/data-source/entities/item.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserEntity,CollectionEntity]),
+    TypeOrmModule.forFeature([UserEntity,CollectionEntity,ItemEntity]),
     CollectionsModule,
     UsersModule,
     PassportModule,
@@ -25,7 +27,7 @@ import { CollectionEntity } from '../../infrastructure/data-source/entities/coll
     }),
   ],
   controllers: [AppController],
-  providers: [AuthService, LocalStrategy, JwtStrategy, CollectionsService],
+  providers: [AuthService, LocalStrategy, JwtStrategy, CollectionsService, ItemsService],
   exports: [AuthService],
 })
 export class AuthModule {}

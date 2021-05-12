@@ -12,12 +12,15 @@ import { CreateUserDto } from '../dtos/users/create-user.dto';
 import { LoginDto } from '../dtos/users/login.dto';
 import { CreateCollectionDto } from '../dtos/collections/create-collection.dto';
 import { CollectionsService } from '../../core/services/collections.service';
+import { ItemsService } from '../../core/services/items.service';
+import { CreateItemDto } from '../dtos/items/create-item.dto';
 
 @Controller()
 export class AppController {
   constructor(
     private authService: AuthService,
     private collectionService: CollectionsService,
+    private itemsService: ItemsService
   ) {}
 
   // @UseGuards(LocalAuthGuard)
@@ -43,6 +46,13 @@ export class AppController {
     // return createUserDto;
     return this.collectionService.create(createCollectionDto);
   }
+  @Post('auth/test/items')
+  async createItem(@Request() req, @Body() createItemDto: CreateItemDto) {
+    // return createUserDto;
+    return this.itemsService.create(createItemDto);
+  }
+
+
 
   @Get('auth/controller')
   async GetCollection(@Request() req) {
