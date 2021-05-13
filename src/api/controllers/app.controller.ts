@@ -4,7 +4,8 @@ import {
   Post,
   UseGuards,
   Get,
-  Body, Delete,
+  Body,
+  Delete,
 } from '@nestjs/common';
 import { AuthService } from '../../core/services/auth.service';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
@@ -15,13 +16,16 @@ import { CollectionsService } from '../../core/services/collections.service';
 import { ItemsService } from '../../core/services/items.service';
 import { CreateItemDto } from '../dtos/items/create-item.dto';
 import { UpdateCollectionDto } from '../dtos/collections/update-collection.dto';
+import { UpdateUserDto } from '../dtos/users/update-user.dto';
+import { UsersService } from '../../core/services/users.service';
 
 @Controller()
 export class AppController {
   constructor(
     private authService: AuthService,
     private collectionService: CollectionsService,
-    private itemsService: ItemsService
+    private itemsService: ItemsService,
+    private userService: UsersService,
   ) {}
 
   // @UseGuards(LocalAuthGuard)
@@ -43,14 +47,26 @@ export class AppController {
   }
 
   @Post('auth/controller')
-  async createCollection(@Request() req, @Body() createCollectionDto: CreateCollectionDto) {
+  async createCollection(
+    @Request() req,
+    @Body() createCollectionDto: CreateCollectionDto,
+  ) {
     // return createUserDto;
     return this.collectionService.create(createCollectionDto);
   }
   @Delete('auth/controller')
-  async deleteCollection(@Request() req, @Body() updateCollectionDto: UpdateCollectionDto) {
+  async deleteCollection(
+    @Request() req,
+    @Body() updateCollectionDto: UpdateCollectionDto,
+  ) {
     // return createUserDto;
     return this.collectionService.remove(updateCollectionDto.id);
+  }
+
+  @Delete('auth/controller/deleteUser')
+  async deleteUser(@Request() req, @Body() updateUserDto: UpdateUserDto) {
+    // return createUserDto;
+    return this.userService.remove(updateUserDto.id);
   }
 
   @Post('auth/test/items')
@@ -58,8 +74,6 @@ export class AppController {
     // return createUserDto;
     return this.itemsService.create(createItemDto);
   }
-
-
 
   @Get('auth/controller')
   async GetCollection(@Request() req) {

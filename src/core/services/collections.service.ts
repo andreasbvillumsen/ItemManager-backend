@@ -7,6 +7,7 @@ import { CollectionEntity } from '../../infrastructure/data-source/entities/coll
 import { CollectionModel } from '../models/collection.model';
 import { ICollectionService } from '../primary-ports/collection.service.interface';
 import { UserEntity } from '../../infrastructure/data-source/entities/user.entity';
+import { ItemEntity } from '../../infrastructure/data-source/entities/item.entity';
 
 @Injectable()
 export class CollectionsService implements ICollectionService {
@@ -15,6 +16,8 @@ export class CollectionsService implements ICollectionService {
     private collectionRepository: Repository<CollectionEntity>,
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
+    @InjectRepository(ItemEntity)
+    private itemRepository: Repository<ItemEntity>,
   ) {}
 
   async create(
@@ -97,8 +100,16 @@ export class CollectionsService implements ICollectionService {
   }
 
   async remove(id: number): Promise<any> {
-    if (await this.collectionRepository.findOne({ id: id })) {
-      // await this.userRepository.softDelete(id);
+    const collectionEntity = await this.collectionRepository.findOne({
+      where: { id: id },
+      relations: ['items'],
+    });
+    if (collectionEntity) {
+      if (collectionEntity.items.length > 0) {
+        for (const item of collectionEntity.items) {
+          await this.itemRepository.delete({ id: item.id });
+        }
+      }
       await this.collectionRepository.delete({ id: id });
       return {
         message: 'Collection was successfully removed!',

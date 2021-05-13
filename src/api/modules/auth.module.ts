@@ -14,10 +14,11 @@ import { CollectionsService } from '../../core/services/collections.service';
 import { CollectionEntity } from '../../infrastructure/data-source/entities/collection.entity';
 import { ItemsService } from '../../core/services/items.service';
 import { ItemEntity } from '../../infrastructure/data-source/entities/item.entity';
+import { UsersService } from '../../core/services/users.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserEntity,CollectionEntity,ItemEntity]),
+    TypeOrmModule.forFeature([UserEntity, CollectionEntity, ItemEntity]),
     CollectionsModule,
     UsersModule,
     PassportModule,
@@ -27,7 +28,14 @@ import { ItemEntity } from '../../infrastructure/data-source/entities/item.entit
     }),
   ],
   controllers: [AppController],
-  providers: [AuthService, LocalStrategy, JwtStrategy, CollectionsService, ItemsService],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    CollectionsService,
+    ItemsService,
+    UsersService,
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}
