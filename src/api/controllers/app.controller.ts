@@ -4,7 +4,7 @@ import {
   Post,
   UseGuards,
   Get,
-  Body,
+  Body, Delete,
 } from '@nestjs/common';
 import { AuthService } from '../../core/services/auth.service';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
@@ -14,6 +14,7 @@ import { CreateCollectionDto } from '../dtos/collections/create-collection.dto';
 import { CollectionsService } from '../../core/services/collections.service';
 import { ItemsService } from '../../core/services/items.service';
 import { CreateItemDto } from '../dtos/items/create-item.dto';
+import { UpdateCollectionDto } from '../dtos/collections/update-collection.dto';
 
 @Controller()
 export class AppController {
@@ -46,6 +47,12 @@ export class AppController {
     // return createUserDto;
     return this.collectionService.create(createCollectionDto);
   }
+  @Delete('auth/controller')
+  async deleteCollection(@Request() req, @Body() updateCollectionDto: UpdateCollectionDto) {
+    // return createUserDto;
+    return this.collectionService.remove(updateCollectionDto.id);
+  }
+
   @Post('auth/test/items')
   async createItem(@Request() req, @Body() createItemDto: CreateItemDto) {
     // return createUserDto;
