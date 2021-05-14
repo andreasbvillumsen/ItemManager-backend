@@ -4,6 +4,8 @@ import {
   MessageBody,
   WebSocketServer,
   ConnectedSocket,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { CreateCollectionDto } from '../dtos/collections/create-collection.dto';
 import { UpdateCollectionDto } from '../dtos/collections/update-collection.dto';
@@ -19,7 +21,8 @@ import { ReadUserDto } from '../dtos/users/read-user.dto';
 import { ReadCollectionDto } from '../dtos/collections/read-collection.dto';
 
 @WebSocketGateway()
-export class CollectionsGateway {
+export class CollectionsGateway
+  implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     @Inject(ICollectionServiceProvider)
     private collectionsService: ICollectionService,
