@@ -26,20 +26,19 @@ export class CollectionsGateway {
   ) {}
   @WebSocketServer() server;
 
-  @Roles(Role.Admin)
   @SubscribeMessage('createCollection')
   async create(
     @MessageBody() createCollectionDto: CreateCollectionDto,
-    @MessageBody() Userid: number,
     @ConnectedSocket() client: Socket,
   ): Promise<void> {
     try {
+      console.log(createCollectionDto);
       const newCollection = await this.collectionsService.create(
         createCollectionDto,
       );
       if (newCollection) {
         const collections = await this.collectionsService.findAllByUserID(
-          Userid,
+          newCollection.users[0].id,
         );
         const frontEndCollectionDtos: ReadCollectionDto[] = collections.map(
           (collection) => ({
@@ -47,7 +46,7 @@ export class CollectionsGateway {
             name: collection.name,
           }),
         );
-        this.server.emit('allCollectionsForUser', frontEndCollectionDtos);
+        client.emit('allCollectionsForUser', frontEndCollectionDtos);
       }
     } catch (e) {
       client.error(e.message);
@@ -65,9 +64,9 @@ export class CollectionsGateway {
           name: collection.name,
         }),
       );
-      this.server.emit('allCollections', frontEndCollectionDtos);
+      client.emit('allCollections', frontEndCollectionDtos);
     } catch (e) {
-      this.server.emit.error(e.message);
+      client.error(e.message);
     }
   }
 
@@ -111,7 +110,6 @@ export class CollectionsGateway {
   @SubscribeMessage('updateCollection')
   async update(
     @MessageBody() updateCollectionDto: UpdateCollectionDto,
-    @MessageBody() userid: number,
     @ConnectedSocket() client: Socket,
   ): Promise<void> {
     try {
@@ -126,7 +124,7 @@ export class CollectionsGateway {
         };
         client.emit('collectionUpdated', frontEndCollectionDto);
         const collections = await this.collectionsService.findAllByUserID(
-          userid,
+          updateCollectionDto.userid,
         );
         const frontEndCollectionDtos: ReadCollectionDto[] = collections.map(
           (collection) => ({

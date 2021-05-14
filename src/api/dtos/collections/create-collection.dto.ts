@@ -3,6 +3,5 @@ import { UserModel } from '../../../core/models/user.model';
 
 export class CreateCollectionDto {
   name: string;
-  items: ItemModel[];
   users: UserModel[];
 }
