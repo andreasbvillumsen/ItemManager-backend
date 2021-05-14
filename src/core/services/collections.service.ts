@@ -84,7 +84,10 @@ export class CollectionsService implements ICollectionService {
       id: id,
     });
     if (collectionToUpdate) {
-      await this.collectionRepository.update(id, updateCollectionDto);
+      const collectionEntity = await this.collectionRepository.create(
+        updateCollectionDto,
+      );
+      await this.collectionRepository.update(id, collectionEntity);
       const updatedCollection = await this.collectionRepository.findOne({
         id: id,
       });
