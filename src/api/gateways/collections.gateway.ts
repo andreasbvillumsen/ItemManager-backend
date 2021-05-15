@@ -100,11 +100,8 @@ export class CollectionsGateway
   ): Promise<void> {
     try {
       const collection = await this.collectionsService.findOneByID(id);
-      const frontEndCollectionDto: ReadCollectionDto = {
-        id: collection.id,
-        name: collection.name,
-      };
-      client.emit('oneCollection', frontEndCollectionDto);
+
+      client.emit('oneCollection', collection);
     } catch (e) {
       client.error(e.message);
     }

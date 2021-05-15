@@ -49,7 +49,8 @@ export class CollectionsService implements ICollectionService {
 
   async findOneByID(id: number): Promise<CollectionModel> {
     const collectionEntity = await this.collectionRepository.findOne({
-      id: id,
+      where: { id: id },
+      relations: ['items', 'users'],
     });
 
     if (collectionEntity) {
@@ -84,7 +85,13 @@ export class CollectionsService implements ICollectionService {
       id: id,
     });
     if (collectionToUpdate) {
-      await this.collectionRepository.update(id, updateCollectionDto);
+      await this.collectionRepository
+        .createQueryBuilder()
+        .update()
+        .set({ name: updateCollectionDto.name })
+        .where('id = :id', { id: collectionToUpdate.id })
+        .execute();
+
       const updatedCollection = await this.collectionRepository.findOne({
         id: id,
       });
