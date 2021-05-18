@@ -19,7 +19,10 @@ import { UserEntity } from '../entities/user.entity';
         database: configService.get('POSTGRES_DB'),
         entities: [CollectionEntity, ItemEntity, UserEntity],
         synchronize: true,
-        ssl: { rejectUnauthorized: false },
+        ssl:
+          process.env.NODE_ENV === 'production'
+            ? { rejectUnauthorized: false }
+            : false,
       }),
     }),
   ],
