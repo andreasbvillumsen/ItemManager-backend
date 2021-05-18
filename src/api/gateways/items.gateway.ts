@@ -31,13 +31,13 @@ export class ItemsGateway {
     try {
       const newItem = await this.itemsService.create(createItemDto);
       if (newItem) {
-        const items = await this.itemsService.findAll();
+        const items = await this.itemsService.findAllByCollectionId(newItem.collection.id);
         const frontEndItemDtos: ReadItemDto[] = items.map((item) => ({
           id: item.id,
           name: item.name,
           desc: item.desc,
         }));
-        this.server.emit('allItems', frontEndItemDtos);
+        this.server.emit('ItemsInCollection', frontEndItemDtos);
       }
     } catch (e) {
       client.error(e.message);
