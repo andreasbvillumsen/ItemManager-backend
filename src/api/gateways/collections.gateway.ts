@@ -19,6 +19,7 @@ import {
 } from '../../core/primary-ports/collection.service.interface';
 import { ReadUserDto } from '../dtos/users/read-user.dto';
 import { ReadCollectionDto } from '../dtos/collections/read-collection.dto';
+import { DeleteCollectionDto } from "../dtos/collections/delete-collection.dto";
 
 @WebSocketGateway()
 export class CollectionsGateway
@@ -141,13 +142,14 @@ export class CollectionsGateway
 
   @SubscribeMessage('deleteCollection')
   async remove(
-    @MessageBody() collectionId: number,
-    @MessageBody() userid: number,
+    @MessageBody() deleteCollectionDto: DeleteCollectionDto,
     @ConnectedSocket() client: Socket,
   ): Promise<void> {
     try {
-      await this.collectionsService.remove(collectionId);
-      const collections = await this.collectionsService.findAllByUserID(userid);
+      await this.collectionsService.remove(deleteCollectionDto.collectionId);
+      const collections = await this.collectionsService.findAllByUserID(
+        deleteCollectionDto.userId,
+      );
       const frontEndCollectionDtos: ReadCollectionDto[] = collections.map(
         (collection) => ({
           id: collection.id,
