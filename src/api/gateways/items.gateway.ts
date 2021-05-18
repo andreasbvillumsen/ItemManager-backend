@@ -72,7 +72,7 @@ export class ItemsGateway {
         name: item.name,
         desc: item.desc,
       }));
-      client.emit('allItems', frontEndItemDtos);
+      client.emit('ItemsInCollection', frontEndItemDtos);
     } catch (e) {
       client.error(e.message);
     }
