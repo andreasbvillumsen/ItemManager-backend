@@ -8,6 +8,7 @@ import { CollectionModel } from '../models/collection.model';
 import { ICollectionService } from '../primary-ports/collection.service.interface';
 import { UserEntity } from '../../infrastructure/data-source/entities/user.entity';
 import { ItemEntity } from '../../infrastructure/data-source/entities/item.entity';
+import { ShareCollectionDto } from '../../api/dtos/collections/share-collection.dto';
 
 @Injectable()
 export class CollectionsService implements ICollectionService {
@@ -123,6 +124,21 @@ export class CollectionsService implements ICollectionService {
       };
     } else {
       throw new Error('Collection does not exist!');
+    }
+  }
+
+  async share(collection: ShareCollectionDto): Promise<any> {
+    const userEntity = await this.userRepository.findOne({
+      email: collection.userEmail,
+    });
+    if (userEntity) {
+      await this.collectionRepository
+        .createQueryBuilder()
+        .relation(CollectionEntity, 'users')
+        .of(collection.id)
+        .add(userEntity.id);
+    } else {
+      throw new Error('Could not find user');
     }
   }
 }

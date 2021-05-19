@@ -19,7 +19,8 @@ import {
 } from '../../core/primary-ports/collection.service.interface';
 import { ReadUserDto } from '../dtos/users/read-user.dto';
 import { ReadCollectionDto } from '../dtos/collections/read-collection.dto';
-import { DeleteCollectionDto } from "../dtos/collections/delete-collection.dto";
+import { DeleteCollectionDto } from '../dtos/collections/delete-collection.dto';
+import { ShareCollectionDto } from "../dtos/collections/share-collection.dto";
 
 @WebSocketGateway()
 export class CollectionsGateway
@@ -171,5 +172,17 @@ export class CollectionsGateway
 
   async handleDisconnect(client: Socket): Promise<any> {
     console.log('Client Disconnect', client.id);
+  }
+
+  @SubscribeMessage('shareCollection')
+  async share(
+    @MessageBody() collection: ShareCollectionDto,
+    @ConnectedSocket() client: Socket,
+  ): Promise<void> {
+    try {
+      await this.collectionsService.share(collection);
+    } catch (e) {
+      client.error(e.message);
+    }
   }
 }
