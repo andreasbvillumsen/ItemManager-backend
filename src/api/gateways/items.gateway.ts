@@ -116,14 +116,14 @@ export class ItemsGateway {
         };
         client.emit('itemUpdated', frontEndItemDto);
 
-        const items = await this.itemsService.findAll();
-        const frontEndItemDtos: ReadItemDto[] = items.map((item) => ({
-          id: item.id,
-          name: item.name,
-          desc: item.desc,
-        }));
+          const items = await this.itemsService.findAllByCollectionId(updatedItem.collection.id);
+          const frontEndItemDtos: ReadItemDto[] = items.map((item) => ({
+            id: item.id,
+            name: item.name,
+            desc: item.desc,
+          }));
+          client.emit('ItemsInCollection', frontEndItemDtos);
 
-        this.server.emit('allItems', frontEndItemDtos);
       }
     } catch (e) {
       client.error(e.message);

@@ -68,7 +68,8 @@ export class ItemsService implements IItemsService {
     const itemToUpdate = await this.itemRepository.findOne({ id: id });
     if (itemToUpdate) {
       await this.itemRepository.update(id, updateItemDto);
-      const updatedItem = await this.itemRepository.findOne({ id: id });
+      const updatedItem = await this.itemRepository.findOne({ where: { id: id },
+        relations: ['collection'] });
 
       if (updatedItem) {
         return JSON.parse(JSON.stringify(updatedItem));
