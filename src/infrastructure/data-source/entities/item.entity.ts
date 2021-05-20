@@ -13,6 +13,9 @@ export class ItemEntity {
   desc: string;
 
   @Column({ nullable: true })
+  imgName: string;
+
+  @Column({ nullable: true })
   imgLink: string;
 
   @ManyToOne(() => CollectionEntity, (collection) => collection.items)

@@ -37,6 +37,7 @@ export class ItemsGateway {
           id: item.id,
           name: item.name,
           desc: item.desc,
+          imgName: item.imgName,
           imgLink: item.imgLink,
         }));
         client.emit('ItemsInCollection', frontEndItemDtos);
@@ -54,6 +55,7 @@ export class ItemsGateway {
         id: item.id,
         name: item.name,
         desc: item.desc,
+        imgName: item.imgName,
         imgLink: item.imgLink,
       }));
       client.emit('allItems', frontEndItemDtos);
@@ -74,6 +76,7 @@ export class ItemsGateway {
         id: item.id,
         name: item.name,
         desc: item.desc,
+        imgName: item.imgName,
         imgLink: item.imgLink,
       }));
       client.emit('ItemsInCollection', frontEndItemDtos);
@@ -93,6 +96,7 @@ export class ItemsGateway {
         id: item.id,
         name: item.name,
         desc: item.desc,
+        imgName: item.imgName,
         imgLink: item.imgLink,
       };
 
@@ -117,6 +121,7 @@ export class ItemsGateway {
           id: updatedItem.id,
           name: updatedItem.name,
           desc: updatedItem.desc,
+          imgName: updatedItem.imgName,
           imgLink: updatedItem.imgLink,
         };
         client.emit('itemUpdated', frontEndItemDto);
@@ -128,6 +133,7 @@ export class ItemsGateway {
           id: item.id,
           name: item.name,
           desc: item.desc,
+          imgName: item.imgName,
           imgLink: item.imgLink,
         }));
         client.emit('ItemsInCollection', frontEndItemDtos);
@@ -152,6 +158,7 @@ export class ItemsGateway {
         id: item.id,
         name: item.name,
         desc: item.desc,
+        imgName: item.imgName,
         imgLink: item.imgLink,
       }));
       client.emit('ItemsInCollection', frontEndItemDtos);
