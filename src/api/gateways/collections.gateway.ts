@@ -20,7 +20,7 @@ import {
 import { ReadUserDto } from '../dtos/users/read-user.dto';
 import { ReadCollectionDto } from '../dtos/collections/read-collection.dto';
 import { DeleteCollectionDto } from '../dtos/collections/delete-collection.dto';
-import { ShareCollectionDto } from "../dtos/collections/share-collection.dto";
+import { ShareCollectionDto } from '../dtos/collections/share-collection.dto';
 
 @WebSocketGateway()
 export class CollectionsGateway

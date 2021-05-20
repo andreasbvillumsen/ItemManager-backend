@@ -37,6 +37,7 @@ export class ItemsGateway {
           id: item.id,
           name: item.name,
           desc: item.desc,
+          imgLink: item.imgLink,
         }));
         client.emit('ItemsInCollection', frontEndItemDtos);
       }
@@ -53,6 +54,7 @@ export class ItemsGateway {
         id: item.id,
         name: item.name,
         desc: item.desc,
+        imgLink: item.imgLink,
       }));
       client.emit('allItems', frontEndItemDtos);
     } catch (e) {
@@ -72,6 +74,7 @@ export class ItemsGateway {
         id: item.id,
         name: item.name,
         desc: item.desc,
+        imgLink: item.imgLink,
       }));
       client.emit('ItemsInCollection', frontEndItemDtos);
     } catch (e) {
@@ -90,6 +93,7 @@ export class ItemsGateway {
         id: item.id,
         name: item.name,
         desc: item.desc,
+        imgLink: item.imgLink,
       };
 
       client.emit('oneItem', frontEndItemDto);
@@ -113,17 +117,20 @@ export class ItemsGateway {
           id: updatedItem.id,
           name: updatedItem.name,
           desc: updatedItem.desc,
+          imgLink: updatedItem.imgLink,
         };
         client.emit('itemUpdated', frontEndItemDto);
 
-          const items = await this.itemsService.findAllByCollectionId(updatedItem.collection.id);
-          const frontEndItemDtos: ReadItemDto[] = items.map((item) => ({
-            id: item.id,
-            name: item.name,
-            desc: item.desc,
-          }));
-          client.emit('ItemsInCollection', frontEndItemDtos);
-
+        const items = await this.itemsService.findAllByCollectionId(
+          updatedItem.collection.id,
+        );
+        const frontEndItemDtos: ReadItemDto[] = items.map((item) => ({
+          id: item.id,
+          name: item.name,
+          desc: item.desc,
+          imgLink: item.imgLink,
+        }));
+        client.emit('ItemsInCollection', frontEndItemDtos);
       }
     } catch (e) {
       client.error(e.message);
@@ -138,14 +145,16 @@ export class ItemsGateway {
     try {
       await this.itemsService.remove(Item.id);
 
-      const items = await this.itemsService.findAllByCollectionId(Item.collection.id);
+      const items = await this.itemsService.findAllByCollectionId(
+        Item.collection.id,
+      );
       const frontEndItemDtos: ReadItemDto[] = items.map((item) => ({
         id: item.id,
         name: item.name,
         desc: item.desc,
+        imgLink: item.imgLink,
       }));
       client.emit('ItemsInCollection', frontEndItemDtos);
-
     } catch (e) {
       client.error(e.message);
     }
