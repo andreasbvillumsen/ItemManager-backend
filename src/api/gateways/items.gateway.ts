@@ -132,19 +132,20 @@ export class ItemsGateway {
 
   @SubscribeMessage('removeItem')
   async remove(
-    @MessageBody() id: number,
+    @MessageBody() Item: UpdateItemDto,
     @ConnectedSocket() client: Socket,
   ): Promise<void> {
     try {
-      await this.itemsService.remove(id);
-      const items = await this.itemsService.findAll();
+      await this.itemsService.remove(Item.id);
+
+      const items = await this.itemsService.findAllByCollectionId(Item.collection.id);
       const frontEndItemDtos: ReadItemDto[] = items.map((item) => ({
         id: item.id,
         name: item.name,
         desc: item.desc,
       }));
+      client.emit('ItemsInCollection', frontEndItemDtos);
 
-      this.server.emit('allItems', frontEndItemDtos);
     } catch (e) {
       client.error(e.message);
     }
