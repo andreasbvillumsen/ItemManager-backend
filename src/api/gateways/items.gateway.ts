@@ -69,7 +69,6 @@ export class ItemsGateway {
     @MessageBody() collectionId: number,
     @ConnectedSocket() client: Socket,
   ): Promise<void> {
-    console.log('findAllByCollectionID');
     try {
       const items = await this.itemsService.findAllByCollectionId(collectionId);
       const frontEndItemDtos: ReadItemDto[] = items.map((item) => ({

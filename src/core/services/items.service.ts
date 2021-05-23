@@ -51,8 +51,6 @@ export class ItemsService implements IItemsService {
       where: { id: id },
       relations: ['collections'],
     });
-    console.log('why');
-    console.log(userEntity);
     if (userEntity.collections) {
       return JSON.parse(JSON.stringify(userEntity.collections));
     } else {
@@ -99,8 +97,6 @@ export class ItemsService implements IItemsService {
       where: { id: id },
       relations: ['items'],
     });
-    console.log('findAllByCollectionId');
-    console.log(collectionEntity);
     if (collectionEntity.items) {
       return JSON.parse(JSON.stringify(collectionEntity.items));
     } else {

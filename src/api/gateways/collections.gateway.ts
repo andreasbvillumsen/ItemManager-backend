@@ -37,7 +37,6 @@ export class CollectionsGateway
     @ConnectedSocket() client: Socket,
   ): Promise<void> {
     try {
-      console.log(createCollectionDto);
       const newCollection = await this.collectionsService.create(
         createCollectionDto,
       );
@@ -61,7 +60,6 @@ export class CollectionsGateway
   @SubscribeMessage('findAllCollections')
   async findAll(@ConnectedSocket() client: Socket): Promise<void> {
     try {
-      console.log('find all');
       const collections = await this.collectionsService.findAll();
       const frontEndCollectionDtos: ReadCollectionDto[] = collections.map(
         (collection) => ({
@@ -80,7 +78,6 @@ export class CollectionsGateway
     @MessageBody() userid: number,
     @ConnectedSocket() client: Socket,
   ): Promise<void> {
-    console.log('findAllByUserID');
     try {
       const collections = await this.collectionsService.findAllByUserID(userid);
       const frontEndCollectionDtos: ReadCollectionDto[] = collections.map(
@@ -164,14 +161,12 @@ export class CollectionsGateway
   }
   async handleConnection(client: Socket, ...args: any[]): Promise<any> {
     try {
-      console.log('Client Connect', client.id);
     } catch (e) {
       client.error(e.message);
     }
   }
 
   async handleDisconnect(client: Socket): Promise<any> {
-    console.log('Client Disconnect', client.id);
   }
 
   @SubscribeMessage('shareCollection')
