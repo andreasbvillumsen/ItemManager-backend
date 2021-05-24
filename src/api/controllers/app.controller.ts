@@ -5,7 +5,7 @@ import {
   UseGuards,
   Get,
   Body,
-  Delete,
+  Delete, HttpException, HttpStatus,
 } from '@nestjs/common';
 import { AuthService } from '../../core/services/auth.service';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
@@ -28,18 +28,36 @@ export class AppController {
   // @UseGuards(LocalAuthGuard)
   @Post('auth/login')
   async login(@Request() req, @Body() loginDto: LoginDto) {
-    return this.authService.login(loginDto);
+    try {
+      return this.authService.login(loginDto);
+    }
+    catch (Error){
+      throw new HttpException(Error.message,HttpStatus.BAD_REQUEST)
+    }
+
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
-    return req.user;
+
+    try{
+      return req.user;
+    }
+    catch (Error){
+      throw new HttpException(Error.message,HttpStatus.BAD_REQUEST)
+    }
+
   }
 
   @Post('auth/register')
   async register(@Request() req, @Body() createUserDto: CreateUserDto) {
     // return createUserDto;
-    return this.authService.register(createUserDto);
+    try{
+      return this.authService.register(createUserDto);
+    }catch (Error) {
+      throw new HttpException(Error.message,HttpStatus.BAD_REQUEST)
+    }
+
   }
 }
