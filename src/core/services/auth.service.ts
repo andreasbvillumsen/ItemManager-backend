@@ -24,6 +24,9 @@ export class AuthService {
 
   async login(loginDto: LoginDto): Promise<any> {
     // return loginDto;
+    try {
+
+
     const userFromDB: UserModel = await this.usersService.findOneByEmail(
       loginDto.email,
     );
@@ -41,6 +44,11 @@ export class AuthService {
       }
     } else {
       throw new Error('User not found');
+    }
+
+    }
+    catch (e){
+      throw new Error(e.message);
     }
   }
 

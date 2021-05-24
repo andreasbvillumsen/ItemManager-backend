@@ -28,12 +28,13 @@ export class AppController {
   // @UseGuards(LocalAuthGuard)
   @Post('auth/login')
   async login(@Request() req, @Body() loginDto: LoginDto) {
-    try {
-      return this.authService.login(loginDto);
-    }
-    catch (Error){
-      throw new HttpException(Error.message,HttpStatus.BAD_REQUEST)
-    }
+      return this.authService.login(loginDto).catch(error =>
+      {
+        console.log(error.message)
+        throw new HttpException(error.message,HttpStatus.BAD_REQUEST)
+      } );
+
+
 
   }
 
@@ -44,8 +45,9 @@ export class AppController {
     try{
       return req.user;
     }
-    catch (Error){
-      throw new HttpException(Error.message,HttpStatus.BAD_REQUEST)
+    catch (error){
+      console.log("error")
+      throw new HttpException(error.message,HttpStatus.BAD_REQUEST)
     }
 
   }
@@ -53,11 +55,13 @@ export class AppController {
   @Post('auth/register')
   async register(@Request() req, @Body() createUserDto: CreateUserDto) {
     // return createUserDto;
-    try{
-      return this.authService.register(createUserDto);
-    }catch (Error) {
-      throw new HttpException(Error.message,HttpStatus.BAD_REQUEST)
-    }
+
+      return this.authService.register(createUserDto).catch(error =>
+      {
+        console.log(error.message)
+        throw new HttpException(error.message,HttpStatus.BAD_REQUEST)
+      } );;
+
 
   }
 }
